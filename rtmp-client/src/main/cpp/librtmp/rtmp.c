@@ -5014,6 +5014,7 @@ fail:
 	      if (r->m_read.buf < mybuf || r->m_read.buf > end) {
 	      	mybuf = realloc(mybuf, cnt + nRead);
 		memcpy(mybuf+cnt, r->m_read.buf, nRead);
+		free(r->m_read.buf);
 		r->m_read.buf = mybuf+cnt+nRead;
 	        break;
 	      }
