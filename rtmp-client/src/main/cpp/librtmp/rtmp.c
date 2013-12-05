@@ -4998,6 +4998,7 @@ fail:
 	  memcpy(mybuf, flvHeader, sizeof(flvHeader));
 	  r->m_read.buf += sizeof(flvHeader);
 	  r->m_read.buflen -= sizeof(flvHeader);
+	  cnt += sizeof(flvHeader);
 
 	  while (r->m_read.timestamp == 0)
 	    {
