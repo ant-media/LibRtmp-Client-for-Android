@@ -1,0 +1,64 @@
+apply plugin: "com.android.model.library"
+
+model {
+
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = "23.0.2"
+
+        defaultConfig.with {
+           // applicationId = "net.butterflytv.rtmp_client"
+            minSdkVersion.apiLevel = 17
+            targetSdkVersion.apiLevel = 23
+            versionCode = 1
+            versionName = "1.0"
+        }
+    }
+
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+            proguardFiles.add(file("proguard-rules.pro"))
+        }
+    }
+
+    compileOptions.with {
+        sourceCompatibility=JavaVersion.VERSION_1_7
+        targetCompatibility=JavaVersion.VERSION_1_7
+    }
+
+    android.ndk {
+        moduleName = "rtmp-jni"
+       // cppFlags.addAll(["-I${file("src/main/jni/native_app_glue")}".toString(),
+       //                  "-I${file("src/main/jni/cpufeatures")}".toString(),
+        //                 "-I${file("src/main/jni/ndk_helper")}".toString()])
+        // CFlags is configured in similar way as cppFlags
+        CFlags.add("-DNO_CRYPTO".toString())
+        CFlags.add("-I${file("src/main/jni/librtmp")}".toString())
+
+    }
+
+    android.productFlavors {
+        create ("arm7") {
+            ndk.abiFilters.add("armeabi-v7a")
+        }
+       // create ("arm8") {
+       //     ndk.abiFilters.add("arm64-v8a")
+       // }
+       // create ("x86-32") {
+       //     ndk.abiFilters.add("x86")
+       // }
+        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+        // https://developer.android.com/ndk/guides/abis.html#sa
+        // build one including all productFlavors
+        //create("fat")
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+}
+
