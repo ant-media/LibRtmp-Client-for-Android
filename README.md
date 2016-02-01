@@ -1,6 +1,6 @@
 # Librtmp_Client_for_Android
-It is probably the smallest(~60KB) rtmp client for android. It calls librtmp functions over JNI interface
-
+It is probably the smallest(~60KB) rtmp client for android. It calls librtmp functions over JNI interface.
+With all cpu architectures(arm, arm7, arm8, x86, x86-64, mips) its size is getting about 300KB
 
 It compiles librtmp library without ssl. 
 
@@ -17,3 +17,25 @@ For live streams add **" live=1"** at the end of the url when calling the **_ope
 
 
 Don't forget calling the **_close_** function after you are done. If you don't, there will be memory leakage
+
+## Install ##
+
+- Add repository to your build.gradle
+```sh
+repositories {
+    ...
+    maven { url  "https://dl.bintray.com/mekya/maven" }
+    ...
+}
+```
+
+- Add dependency to your build gradle
+```sh
+dependencies {
+    ...
+    compile 'net.butterflytv.utils:rtmp-client:0.1.1'
+    ...
+}
+```
+
+- That's all. You can use RtmpClient class
