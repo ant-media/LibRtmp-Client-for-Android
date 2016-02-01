@@ -1,0 +1,177 @@
+apply plugin: "com.android.model.library"
+
+model {
+
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = "23.0.2"
+
+        defaultConfig.with {
+           // applicationId = "net.butterflytv.rtmp_client"
+            minSdkVersion.apiLevel = 16
+            targetSdkVersion.apiLevel = 22
+            versionCode = 1
+            versionName = "0.1.1"
+        }
+    }
+
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+            proguardFiles.add(file("proguard-rules.pro"))
+        }
+    }
+
+    compileOptions.with {
+        sourceCompatibility=JavaVersion.VERSION_1_7
+        targetCompatibility=JavaVersion.VERSION_1_7
+    }
+
+    android.ndk {
+        moduleName = "rtmp-jni"
+       // cppFlags.addAll(["-I${file("src/main/jni/native_app_glue")}".toString(),
+       //                  "-I${file("src/main/jni/cpufeatures")}".toString(),
+        //                 "-I${file("src/main/jni/ndk_helper")}".toString()])
+        // CFlags is configured in similar way as cppFlags
+        CFlags.add("-DNO_CRYPTO".toString())
+        CFlags.add("-I${file("src/main/jni/librtmp")}".toString())
+
+    }
+
+    android.productFlavors {
+        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+        // https://developer.android.com/ndk/guides/abis.html#sa
+        // build one including all productFlavors
+      //create("fat")
+    }
+
+}
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'rtmp-client'
+
+    publishedGroupId = 'net.butterflytv.utils'
+    libraryName = 'rtmp-client'
+    artifact = 'rtmp-client'
+
+    libraryDescription = 'RTMP Client for Android. It supports all architectures with 300KB total size'
+
+    siteUrl = 'https://github.com/ButterflyTV/Librtmp-Client-for-Android'
+    gitUrl = 'https://github.com/ButterflyTV/LibRtmp-Client-for-Android.git'
+
+    libraryVersion = '0.1.1'
+
+    developerId = 'mekya'
+    developerName = 'Ahmet Oguz Mermerkaya'
+    developerEmail = 'ahmetmermerkaya@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+dependencies {
+
+}
+
+/////////////////////////////////////////////////////
+apply plugin: 'com.jfrog.bintray'
+
+version = libraryVersion
+
+task sourcesJar(type: Jar) {
+    from "src/main/java"
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = "src/main/java"
+    // classpath += project.files(getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+
+// Bintray
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = properties.getProperty("bintray.gpg.password")
+                //Optional. The passphrase for GPG signing'
+            }
+        }
+    }
+}
+
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = publishedGroupId                               // Maven Group ID for the artifact
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                groupId publishedGroupId
+                artifactId artifact
+
+                // Add your description here
+                name libraryName
+                description libraryDescription
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name licenseName
+                        url licenseUrl
+                    }
+                }
+                developers {
+                    developer {
+                        id developerId
+                        name developerName
+                        email developerEmail
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+
+                }
+            }
+        }
+    }
+}
+
+
+
+
