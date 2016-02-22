@@ -4,7 +4,10 @@ With all cpu architectures(arm, arm7, arm8, x86, x86-64, mips) its size is getti
 
 It compiles librtmp library without ssl. 
 
-You can call below functions of **RtmpClient** from Java. FYI, **_write_** function has not been tested.
+In version 0.2, it supports FLV muxing and sending stream via RTMP 
+
+
+#####To read streams, you can call below functions of **RtmpClient** from Java#####
 
 For live streams add **" live=1"** at the end of the url when calling the **_open_** function
 
@@ -15,8 +18,21 @@ For live streams add **" live=1"** at the end of the url when calling the **_ope
 * *public native int pause(int pause);*
 * *public native int close();*
 
-
 Don't forget calling the **_close_** function after you are done. If you don't, there will be memory leakage
+
+
+#####To publish streams, you can call below functions of **RtmpMuxer** from Java#####
+* *public native int open(String url);* : First, call this function with the url you plan to publish  
+* *public native int writeVideo(byte[] data, int offset, int length, int timestamp);*: Write h264 nal units with this function
+* *public native int writeAudio(byte[] data, int offset, int length, int timestamp);*: Write aac frames with this function
+* *public native int close();*: Call this function to close the publishing.
+
+To save flv file locally as well, you can use below functions
+* *public native void file_open(String filename);* : call this function with full file path
+* *public native void write_flv_header(boolean is_have_audio, boolean is_have_video);*: After opening file call this function
+* *public native void file_close();*: Call this function to close the file. 
+
+if any local file is opened, library will write the audio and video frames to local file as well. 
 
 ## Install ##
 
@@ -33,7 +49,7 @@ repositories {
 ```sh
 dependencies {
     ...
-    compile 'net.butterflytv.utils:rtmp-client:0.1.1'
+    compile 'net.butterflytv.utils:rtmp-client:0.2'
     ...
 }
 ```
