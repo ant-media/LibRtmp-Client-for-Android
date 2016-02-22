@@ -35,6 +35,7 @@ model {
         // CFlags is configured in similar way as cppFlags
         CFlags.add("-DNO_CRYPTO".toString())
         CFlags.add("-I${file("src/main/jni/librtmp")}".toString())
+        ldLibs.add("log")
 
     }
 
