@@ -1,10 +1,10 @@
-# Librtmp_Client_for_Android
+# Librtmp Client for Android
 It is probably the smallest(~60KB) rtmp client for android. It calls librtmp functions over JNI interface.
 With all cpu architectures(arm, arm7, arm8, x86, x86-64, mips) its size is getting about 300KB
 
 It compiles librtmp library without ssl. 
 
-In version 0.2, it supports FLV muxing and sending stream via RTMP 
+In version 0.2, it supports FLV muxing and sending stream via RTMP. FLV muxing is based on this repo https://github.com/rainfly123/flvmuxer
 
 
 #####To read streams, you can call below functions of **RtmpClient** from Java#####
