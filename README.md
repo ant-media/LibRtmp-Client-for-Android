@@ -36,20 +36,11 @@ if any local file is opened, library will write the audio and video frames to lo
 
 ## Install ##
 
-- Add repository to your build.gradle
-```sh
-repositories {
-    ...
-    maven { url  "https://dl.bintray.com/mekya/maven" }
-    ...
-}
-```
-
 - Add dependency to your build gradle
 ```sh
 dependencies {
     ...
-    compile 'net.butterflytv.utils:rtmp-client:0.2'
+    compile 'net.butterflytv.utils:rtmp-client:0.2.1'
     ...
 }
 ```
