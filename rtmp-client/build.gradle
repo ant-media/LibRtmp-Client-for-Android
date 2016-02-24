@@ -3,16 +3,8 @@ apply plugin: "com.android.model.library"
 model {
 
     android {
-        compileSdkVersion = 23
+        compileSdkVersion = 16
         buildToolsVersion = "23.0.2"
-
-        defaultConfig.with {
-           // applicationId = "net.butterflytv.rtmp_client"
-            minSdkVersion.apiLevel = 16
-            targetSdkVersion.apiLevel = 22
-            versionCode = 1
-            versionName = "0.1.1"
-        }
     }
 
     android.buildTypes {
@@ -61,7 +53,7 @@ ext {
     siteUrl = 'https://github.com/ButterflyTV/Librtmp-Client-for-Android'
     gitUrl = 'https://github.com/ButterflyTV/LibRtmp-Client-for-Android.git'
 
-    libraryVersion = '0.1.1'
+    libraryVersion = '0.2.1'
 
     developerId = 'mekya'
     developerName = 'Ahmet Oguz Mermerkaya'
