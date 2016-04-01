@@ -41,4 +41,11 @@ public class RTMPMuxer {
     public native void file_open(String filename);
 
     public native void file_close();
+
+    /**
+     *
+     * @return 1 if it is connected
+     * 0 if it is not connected
+     */
+    public native int isConnected();
 }

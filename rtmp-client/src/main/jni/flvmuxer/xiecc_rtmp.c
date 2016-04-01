@@ -219,6 +219,15 @@ int rtmp_close() {
     }
 }
 
+int rtmp_is_connected()
+{
+    if (rtmp) {
+        if (RTMP_IsConnected(rtmp)) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 
 // @brief send audio frame

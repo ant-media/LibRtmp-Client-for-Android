@@ -54,6 +54,9 @@ JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_open(JNIEnv *env, jobject instance, jstring url,
                                                    jboolean isPublishMode);
 
+JNIEXPORT jint JNICALL
+Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject instance);
+
 JNIEXPORT void JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_write_1flv_1header(JNIEnv *env, jobject instance,
                                                                jboolean is_have_audio,
@@ -78,6 +81,9 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1close(JNIEnv *env, jobject ins
     flv_file_close();
 
 }
+
+JNIEXPORT jint JNICALL
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv *env, jobject instance);
 
 #ifdef __cplusplus
 }

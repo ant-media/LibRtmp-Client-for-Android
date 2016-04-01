@@ -20,6 +20,7 @@ int rtmp_open_for_write(const char *url);
 
 int rtmp_close();
 
+int rtmp_is_connected();
 
 // @brief send audio frame
 // @param [in] rtmp_sender handler

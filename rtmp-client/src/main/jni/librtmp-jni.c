@@ -112,3 +112,15 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_close
     return 0;
 }
 
+
+JNIEXPORT jint JNICALL
+Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject instance) {
+     int connected = RTMP_IsConnected(rtmp);
+     if (connected) {
+        return 1;
+     }
+     else {
+        return 0;
+     }
+}
+

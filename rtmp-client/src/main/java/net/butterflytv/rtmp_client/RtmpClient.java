@@ -46,6 +46,13 @@ public class RtmpClient {
     public native int pause(int pause);
 
     /**
+     *
+     * @return 1 if it is connected
+     * 0 if it is not connected
+     */
+    public native int isConnected();
+
+    /**
      * closes the connection. Dont forget to call
      * @return 0
      */

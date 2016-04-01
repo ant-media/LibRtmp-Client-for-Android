@@ -49,3 +49,8 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_close(JNIEnv *env, jobject instance)
     return 0;
 
 }
+
+JNIEXPORT jint JNICALL
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv *env, jobject instance) {
+    return rtmp_is_connected();
+}

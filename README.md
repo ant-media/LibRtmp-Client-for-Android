@@ -17,6 +17,7 @@ For live streams add **" live=1"** at the end of the url when calling the **_ope
 * *public native int seek(int seekTime);*
 * *public native int pause(int pause);*
 * *public native int close();*
+* *public native int isConnected();*: Call this function to query the connection status. Returns 1 if connected, returns 0 if not connected
 
 Don't forget calling the **_close_** function after you are done. If you don't, there will be memory leakage
 
@@ -26,6 +27,7 @@ Don't forget calling the **_close_** function after you are done. If you don't, 
 * *public native int writeVideo(byte[] data, int offset, int length, int timestamp);*: Write h264 nal units with this function
 * *public native int writeAudio(byte[] data, int offset, int length, int timestamp);*: Write aac frames with this function
 * *public native int close();*: Call this function to close the publishing.
+* *public native int isConnected();*: Call this function to query the connection status. Returns 1 if connected, returns 0 if not connected
 
 To save flv file locally as well, you can use below functions
 * *public native void file_open(String filename);* : call this function with full file path
