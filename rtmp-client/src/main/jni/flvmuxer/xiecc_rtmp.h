@@ -16,7 +16,7 @@ extern "C"{
 #define RTMP_STREAM_PROPERTY_RECORD      0x00000004
 
 
-int rtmp_open_for_write(const char *url);
+int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_height);
 
 int rtmp_close();
 
