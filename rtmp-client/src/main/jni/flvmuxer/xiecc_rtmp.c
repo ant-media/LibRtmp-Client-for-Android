@@ -142,7 +142,7 @@ static uint8_t gen_audio_tag_header()
     val = 0xA0 | (soundRate << 2) | 0x02 | soundType;
     return val;
 }
-int rtmp_open_for_write(const char *url) {
+int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_height) {
     rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
         return -1;
@@ -184,7 +184,9 @@ int rtmp_open_for_write(const char *url) {
         output = AMF_EncodeString(output, outend, &av_onMetaData);
         *output++ = AMF_ECMA_ARRAY;
 
-        output = AMF_EncodeInt32(output, outend, 3);
+        output = AMF_EncodeInt32(output, outend, 5);
+        output = AMF_EncodeNamedNumber(output, outend, &av_width, video_width);
+        output = AMF_EncodeNamedNumber(output, outend, &av_height, video_height);
         output = AMF_EncodeNamedNumber(output, outend, &av_duration, 0.0);
         output = AMF_EncodeNamedNumber(output, outend, &av_videocodecid, 7);
         output = AMF_EncodeNamedNumber(output, outend, &av_audiocodecid, 10);

@@ -7,10 +7,10 @@
  * if it returns bigger than 0 it is successfull
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv *env, jobject instance, jstring url_) {
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv *env, jobject instance, jstring url_, jint video_width, jint video_height) {
     const char *url = (*env)->GetStringUTFChars(env, url_, 0);
 
-    int result = rtmp_open_for_write(url);
+    int result = rtmp_open_for_write(url, video_width, video_height);
 
     (*env)->ReleaseStringUTFChars(env, url_, url);
     return result;
