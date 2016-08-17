@@ -142,6 +142,8 @@ static uint8_t gen_audio_tag_header()
     val = 0xA0 | (soundRate << 2) | 0x02 | soundType;
     return val;
 }
+
+
 int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_height) {
     rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
@@ -218,6 +220,7 @@ int rtmp_close() {
     if (rtmp) {
         RTMP_Close(rtmp);
         RTMP_Free(rtmp);
+        rtmp = NULL;
     }
 }
 
@@ -231,6 +234,12 @@ int rtmp_is_connected()
     return 0;
 }
 
+int rtmp_read_date(uint8_t* data, int size) {
+    if (rtmp) {
+        RTMP_Read(rtmp, data, size);
+    }
+    return 0;
+}
 
 // @brief send audio frame
 // @param [in] data       : AACAUDIODATA

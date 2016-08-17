@@ -33,6 +33,9 @@ public class RTMPMuxer {
      */
     public native int writeAudio(byte[] data, int offset, int length, int timestamp);
 
+
+    public native int read(byte[] data, int offset, int size);
+
     public native int close();
 
 

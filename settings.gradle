@@ -1,1 +1,1 @@
-include ':rtmp-client'
+include ':rtmp-client', ':test'

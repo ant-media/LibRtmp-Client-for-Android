@@ -83,6 +83,9 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1close(JNIEnv *env, jobject ins
 }
 
 JNIEXPORT jint JNICALL
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_read(JNIEnv *env, jobject instance, jbyteArray data_,
+                                                 jint offset, jint size);
+JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv *env, jobject instance);
 
 #ifdef __cplusplus

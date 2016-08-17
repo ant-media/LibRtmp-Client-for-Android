@@ -1,4 +1,6 @@
 #include <jni.h>
+#include <malloc.h>
+#include <rtmp.h>
 
 #include "flvmuxer/xiecc_rtmp.h"
 
@@ -53,4 +55,22 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_close(JNIEnv *env, jobject instance)
 JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv *env, jobject instance) {
     return rtmp_is_connected();
+}
+
+JNIEXPORT jint JNICALL
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_read(JNIEnv *env, jobject instance, jbyteArray data_,
+                                                 jint offset, jint size) {
+
+
+    char* data = malloc(size*sizeof(char));
+
+    int readCount = rtmp_read_date(data, size);
+
+    if (readCount > 0) {
+        (*env)->SetByteArrayRegion(env, data_, offset, readCount, data);  // copy
+    }
+    free(data);
+
+    return readCount;
+
 }

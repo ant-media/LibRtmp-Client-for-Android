@@ -44,6 +44,7 @@ int rtmp_sender_write_video_frame(uint8_t *data,
                                   int key,
                                   uint32_t abs_ts);
 
+int rtmp_read_date(uint8_t* data, int size);
 
 void flv_file_open(const char *filename);
 
