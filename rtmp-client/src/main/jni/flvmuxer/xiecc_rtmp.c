@@ -523,7 +523,7 @@ int rtmp_sender_write_video_frame(uint8_t *data,
         free(output);
         video_config_ok = true;
     }
-    else if (nal[0] == 0x65)
+    else if ((nal[0] & 0x1f) == 0x05) // it can be 25,45,65
     {
         body_len = nal_len + 5 + 4; //flv VideoTagHeader +  NALU length
         output_len = body_len + FLV_TAG_HEAD_LEN + FLV_PRE_TAG_LEN;
@@ -573,8 +573,7 @@ int rtmp_sender_write_video_frame(uint8_t *data,
         //RTMP Send out
         free(output);
     }
-
-    else if ((nal[0] & 0x1f) == 0x01)
+    else if ((nal[0] & 0x1f) == 0x01)  // itcan be 21,41,61
     {
         body_len = nal_len + 5 + 4; //flv VideoTagHeader +  NALU length
         output_len = body_len + FLV_TAG_HEAD_LEN + FLV_PRE_TAG_LEN;
