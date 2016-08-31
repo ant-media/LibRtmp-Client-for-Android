@@ -23,7 +23,7 @@ Don't forget calling the **_close_** function after you are done. If you don't, 
 
 
 #####To publish streams, you can call below functions of **RtmpMuxer** from Java#####
-* *public native int open(String url);* : First, call this function with the url you plan to publish  
+* *public native int open(String url, int width, int height);* : First, call this function with the url you plan to publish. Width and height are the width and height of the video. These two parameters are not mandatory. They are optional. They put width and height values into the metadata tag.
 * *public native int writeVideo(byte[] data, int offset, int length, int timestamp);*: Write h264 nal units with this function
 * *public native int writeAudio(byte[] data, int offset, int length, int timestamp);*: Write aac frames with this function
 * *public native int close();*: Call this function to close the publishing.
@@ -42,7 +42,7 @@ if any local file is opened, library will write the audio and video frames to lo
 ```sh
 dependencies {
     ...
-    compile 'net.butterflytv.utils:rtmp-client:0.2.1'
+    compile 'net.butterflytv.utils:rtmp-client:0.2.6'
     ...
 }
 ```
