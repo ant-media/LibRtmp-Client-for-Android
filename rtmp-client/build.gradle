@@ -67,7 +67,7 @@ ext {
     siteUrl = 'https://github.com/ButterflyTV/Librtmp-Client-for-Android'
     gitUrl = 'https://github.com/ButterflyTV/LibRtmp-Client-for-Android.git'
 
-    libraryVersion = '0.2.6'
+    libraryVersion = '0.2.6.1'
 
     developerId = 'mekya'
     developerName = 'Ahmet Oguz Mermerkaya'
@@ -179,6 +179,9 @@ install {
     }
 }
 
+//How to upload
+//./gradlew install
+//./gradlew bintrayUpload
 
 
 
