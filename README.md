@@ -7,7 +7,7 @@ It compiles librtmp library without ssl.
 In version 0.2, it supports FLV muxing and sending stream via RTMP. FLV muxing is based on this repo https://github.com/rainfly123/flvmuxer
 
 
-#####To read streams, you can call below functions of **RtmpClient** from Java#####
+##### To read streams, you can call below functions of **RtmpClient** from Java #####
 
 For live streams add **" live=1"** at the end of the url when calling the **_open_** function
 
@@ -22,7 +22,7 @@ For live streams add **" live=1"** at the end of the url when calling the **_ope
 Don't forget calling the **_close_** function after you are done. If you don't, there will be memory leakage
 
 
-#####To publish streams, you can call below functions of **RtmpMuxer** from Java#####
+##### To publish streams, you can call below functions of **RtmpMuxer** from Java #####
 * *public native int open(String url, int width, int height);* : First, call this function with the url you plan to publish. Width and height are the width and height of the video. These two parameters are not mandatory. They are optional. They put width and height values into the metadata tag.
 * *public native int writeVideo(byte[] data, int offset, int length, int timestamp);*: Write h264 nal units with this function
 * *public native int writeAudio(byte[] data, int offset, int length, int timestamp);*: Write aac frames with this function
