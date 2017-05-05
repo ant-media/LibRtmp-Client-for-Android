@@ -24,7 +24,7 @@ import static junit.framework.Assert.assertTrue;
 public class ApplicationTest {
 
     @Rule
-    public ActivityTestRule mActivityRule = new ActivityTestRule<>(
+    public ActivityTestRule mActivityRule = new ActivityTestRule<MainActivity>(
             MainActivity.class, true);
 
     RTMPMuxer rtmpMuxer;

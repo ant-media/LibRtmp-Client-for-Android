@@ -1,58 +1,81 @@
-apply plugin: "com.android.model.library"
+apply plugin: "com.android.library"
 
-model {
 
-    android {
-        compileSdkVersion = 16
-        buildToolsVersion = "23.0.2"
+android {
+    compileSdkVersion  21
+    buildToolsVersion  "25.0.3"
+    defaultConfig {
+        // applicationId "io.antmedia.rtmpclient"
+        minSdkVersion 21
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions"
+            }
+        }
     }
 
-    android.buildTypes {
+
+
+    buildTypes {
         release {
-            minifyEnabled = false
+            minifyEnabled  false
             proguardFiles.add(file("proguard-rules.pro"))
         }
     }
 
-    compileOptions.with {
-        sourceCompatibility=JavaVersion.VERSION_1_7
-        targetCompatibility=JavaVersion.VERSION_1_7
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    android.ndk {
-        moduleName = "rtmp-jni"
-        // cppFlags.addAll(["-I${file("src/main/jni/native_app_glue")}".toString(),
-        //                  "-I${file("src/main/jni/cpufeatures")}".toString(),
-        //                 "-I${file("src/main/jni/ndk_helper")}".toString()])
-        // CFlags is configured in similar way as cppFlags
-        CFlags.add("-DNO_CRYPTO".toString())
-        CFlags.add("-I${file("src/main/jni/librtmp")}".toString())
-        ldLibs.add("log")
-
-    }
-
-    android.productFlavors {
-        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
-        // https://developer.android.com/ndk/guides/abis.html#sa
-        // build one including all productFlavors
-
-        /*
-        create("fat") {
-            ndk.with {
-            // You can customize the NDK configurations for each
-            // productFlavors and buildTypes.
-            abiFilters.add("armeabi")
-            abiFilters.add("armeabi-v7a")
-            abiFilters.add("arm64-v8a")
-            abiFilters.add("mips")
-            abiFilters.add("x86")
-            }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
         }
-        */
-
     }
+}
+
+
+
+
+//android.ndk {
+//    moduleName = "rtmp-jni"
+    // cppFlags.addAll(["-I${file("src/main/jni/native_app_glue")}".toString(),
+    //                  "-I${file("src/main/jni/cpufeatures")}".toString(),
+    //                 "-I${file("src/main/jni/ndk_helper")}".toString()])
+    // CFlags is configured in similar way as cppFlags
+//    CFlags.add("-DNO_CRYPTO".toString())
+//    CFlags.add("-I${file("src/main/jni/librtmp")}".toString())
+//    ldLibs.add("log")
+
+//}
+
+android.productFlavors {
+    // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+    // https://developer.android.com/ndk/guides/abis.html#sa
+    // build one including all productFlavors
+
+    /*
+    create("fat") {
+        ndk.with {
+        // You can customize the NDK configurations for each
+        // productFlavors and buildTypes.
+        abiFilters.add("armeabi")
+        abiFilters.add("armeabi-v7a")
+        abiFilters.add("arm64-v8a")
+        abiFilters.add("mips")
+        abiFilters.add("x86")
+        }
+    }
+    */
 
 }
+
+
 
 ext {
     bintrayRepo = 'maven'
@@ -83,7 +106,7 @@ dependencies {
 }
 
 /////////////////////////////////////////////////////
-apply plugin: 'com.jfrog.bintray'
+apply plugin: "com.jfrog.bintray"
 
 version = libraryVersion
 
