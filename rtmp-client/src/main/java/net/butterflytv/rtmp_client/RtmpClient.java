@@ -9,6 +9,14 @@ public class RtmpClient {
         System.loadLibrary("rtmp-jni");
     }
 
+
+
+    public final static int OPEN_ERROR_ALLOC = -1;
+    public final static int OPEN_ERROR_SETUP_URL = -2;
+    public final static int OPEN_ERROR_CONNECT = -3;
+    public final static int OPEN_ERROR_CONNECT_STREAM = -4;
+    public final static int OPEN_SUCCESS = 1;
+
     /**
      * opens the rtmp url
      * @param url
@@ -17,12 +25,13 @@ public class RtmpClient {
      * if this is an publication it is true,
      * if connection is for getting stream it is false
      * @return return a minus value if it fails
-     * -1 RTMP_Alloc error
-     * -2 RTMP_SetupURL error
-     * -3 RTMP_Connect error
-     * -4 RTMP_ConnectStream error
+     * returns
+     * {@link #OPEN_ERROR_ALLOC} if there is a problem in memory allocation
+     * {@link #OPEN_ERROR_SETUP_URL} if there is a problem in setting url
+     * {@link #OPEN_ERROR_CONNECT} if there is a problem in connecting to the rtmp server
+     * {@link #OPEN_ERROR_CONNECT_STREAM} if there is a problem in connecting stream
      *
-     * returns 1 if it is successful
+     * returns {@link #OPEN_SUCCESS} if it is successful
      */
     public native int open(String url, boolean isPublishMode);
 
