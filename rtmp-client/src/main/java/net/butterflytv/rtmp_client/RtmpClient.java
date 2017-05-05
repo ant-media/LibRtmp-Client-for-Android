@@ -1,5 +1,7 @@
 package net.butterflytv.rtmp_client;
 
+import java.io.IOException;
+
 /**
  * Created by faraklit on 01.01.2016.
  */
@@ -52,10 +54,19 @@ public class RtmpClient {
      *
      * There is no negative return value
      *
+     *  @throws IOException if connection is not opened or connection to server is lost
+     *
      */
-    public native int read(byte[] data, int offset, int size);
 
-    public native int write(byte[] data);
+    public native int read(byte[] data, int offset, int size) throws IOException;
+
+    /**
+     *
+     * @param data
+     * @return number of bytes written
+     * @throws IOException if connection is not opened or connection to server is lost
+     */
+    public native int write(byte[] data) throws IOException;
 
     public native int seek(int seekTime);
 

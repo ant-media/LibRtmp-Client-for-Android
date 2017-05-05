@@ -6,12 +6,17 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import net.butterflytv.rtmp_client.RTMPMuxer;
+import net.butterflytv.rtmp_client.RtmpClient;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
+import static android.test.MoreAsserts.assertNotEqual;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 
@@ -29,6 +34,29 @@ public class ApplicationTest {
 
     RTMPMuxer rtmpMuxer;
 
+
+    @Test
+    public void testRTMPClientThrowException() {
+        RtmpClient rtmpClient = new RtmpClient();
+        boolean closeCheck = false;
+        boolean exceptionCheck = false;
+        try {
+            int result = rtmpClient.open("rtmp://dummy/vod", false);
+            assertNotEqual(result, RtmpClient.OPEN_SUCCESS);
+            rtmpClient.close();
+            rtmpClient.close();
+
+            closeCheck = true;
+
+            byte[] data = new byte[1024];
+            rtmpClient.read(data, 0, 1024);
+        } catch (IOException e) {
+            e.printStackTrace();
+            exceptionCheck = true;
+        }
+        assertTrue(exceptionCheck);
+        assertTrue(closeCheck);
+    }
 
     @Test
     public void testRTMPIsConnectedIfServerDowns() {

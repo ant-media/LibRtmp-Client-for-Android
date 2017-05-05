@@ -5,7 +5,7 @@
 // Created by faraklit on 01.01.2016.
 //
 
-RTMP *rtmp;
+RTMP *rtmp = NULL;
 /*
  * Class:     net_butterflytv_rtmp_client_RtmpClient
  * Method:    open
@@ -55,6 +55,14 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_open
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_read
         (JNIEnv * env, jobject thiz, jbyteArray data_, jint offset, jint size) {
 
+    if (rtmp == NULL) {
+        throwIOException(env, "First call open function");
+    }
+    int connected = RTMP_IsConnected(rtmp);
+    if (!connected) {
+        throwIOException(env, "Connection to server is lost");
+    }
+
     char* data = malloc(size*sizeof(char));
 
     int readCount = RTMP_Read(rtmp, data, size);
@@ -74,6 +82,15 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_read
  */
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_write
         (JNIEnv * env, jobject thiz, jcharArray data, jint size) {
+
+    if (rtmp == NULL) {
+        throwIOException(env, "First call open function");
+    }
+
+    int connected = RTMP_IsConnected(rtmp);
+    if (!connected) {
+        throwIOException(env, "Connection to server is lost");
+    }
 
     return RTMP_Write(rtmp, data, size);
 }
@@ -97,6 +114,9 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_seek
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
         (JNIEnv * env, jobject thiz, jint pauseTime) {
 
+    if (rtmp == NULL) {
+        throwIOException(env, "First call open function");
+    }
     return RTMP_Pause(rtmp, pauseTime);
 }
 
@@ -107,14 +127,21 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
  */
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_close
         (JNIEnv * env, jobject thiz) {
-	RTMP_Close(rtmp);
-	RTMP_Free(rtmp);
+
+    if (rtmp != NULL) {
+        RTMP_Close(rtmp);
+        RTMP_Free(rtmp);
+    }
     return 0;
 }
 
 
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject instance) {
+Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject instance)
+{
+    if (rtmp == NULL) {
+        return 0;
+    }
      int connected = RTMP_IsConnected(rtmp);
      if (connected) {
         return 1;
@@ -122,5 +149,11 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject in
      else {
         return 0;
      }
+}
+
+jint throwIOException (JNIEnv *env, char *message )
+{
+    jclass Exception = (*env)->FindClass(env, "java/io/IOException");
+    return (*env)->ThrowNew(env, Exception, message);
 }
 
