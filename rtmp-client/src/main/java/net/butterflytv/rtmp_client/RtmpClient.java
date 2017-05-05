@@ -37,6 +37,7 @@ public class RtmpClient {
 
     /**
      * read data from rtmp connection
+     *
      * @param data
      * buffer that will be filled
      * @param offset
@@ -45,6 +46,12 @@ public class RtmpClient {
      * size of the data to be reat
      * @return
      * number of bytes to be read
+     *
+     * if it returns 0, it means stream is complete
+     *  and close function can be called.
+     *
+     * There is no negative return value
+     *
      */
     public native int read(byte[] data, int offset, int size);
 
