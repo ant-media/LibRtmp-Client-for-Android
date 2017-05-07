@@ -38,24 +38,15 @@ public class ApplicationTest {
     @Test
     public void testRTMPClientThrowException() {
         RtmpClient rtmpClient = new RtmpClient();
-        boolean closeCheck = false;
         boolean exceptionCheck = false;
         try {
-            int result = rtmpClient.open("rtmp://dummy/vod", false);
-            assertNotEqual(result, RtmpClient.OPEN_SUCCESS);
-            rtmpClient.close();
-            rtmpClient.close();
-
-            closeCheck = true;
-
-            byte[] data = new byte[1024];
-            rtmpClient.read(data, 0, 1024);
-        } catch (IOException e) {
+            rtmpClient.open("rtmp://dummy/vod", false);
+        } catch (RtmpClient.RtmpIOException e) {
             e.printStackTrace();
             exceptionCheck = true;
         }
         assertTrue(exceptionCheck);
-        assertTrue(closeCheck);
+
     }
 
     @Test

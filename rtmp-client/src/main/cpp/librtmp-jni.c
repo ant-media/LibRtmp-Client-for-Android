@@ -1,9 +1,15 @@
 #include <malloc.h>
 #include "librtmp-jni.h"
 #include "rtmp.h"
+#include <android/log.h>
 //
 // Created by faraklit on 01.01.2016.
 //
+
+
+#define  LOG_TAG    "someTag"
+
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 RTMP *rtmp = NULL;
 /*
@@ -17,6 +23,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_open
     const char *url = (*env)->GetStringUTFChars(env, url_, 0);
     rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
+        throwRtmpIOException(env, -1, "Rtmp allocation problem");
         return -1;
     }
 
@@ -25,6 +32,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_open
 
     if (!ret) {
         RTMP_Free(rtmp);
+        throwRtmpIOException(env, -2, "Rtmp setup url problem, check the rtmp url");
         return -2;
     }
     if (isPublishMode) {
@@ -34,11 +42,13 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_open
 	ret = RTMP_Connect(rtmp, NULL);
     if (!ret) {
         RTMP_Free(rtmp);
+        throwRtmpIOException(env, -3, "Rtmp connect problem, check that you are connected to network and rtmp server is running");
         return -3;
     }
 	ret = RTMP_ConnectStream(rtmp, 0);
 
     if (!ret) {
+        throwRtmpIOException(env, -4, "Rtmp connect stream error");
         return -4;
     }
     (*env)->ReleaseStringUTFChars(env, url_, url);
@@ -157,3 +167,13 @@ jint throwIOException (JNIEnv *env, char *message )
     return (*env)->ThrowNew(env, Exception, message);
 }
 
+jint throwRtmpIOException(JNIEnv *env, int errorCode, char* message)
+{
+    jclass cls = (*env)->FindClass(env, "net/butterflytv/rtmp_client/RtmpClient$RtmpIOException");
+    jmethodID mid = (*env)->GetMethodID(env, cls, "<init>", "(ILjava/lang/String;)V");
+    jstring jmessage = (*env)->NewStringUTF(env, message);
+    jthrowable e = (*env)->NewObject(env, cls, mid, errorCode, jmessage);
+
+    /* Now throw the exception */
+    return (*env)->Throw(env, e);
+}

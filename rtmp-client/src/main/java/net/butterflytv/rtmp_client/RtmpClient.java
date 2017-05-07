@@ -12,12 +12,41 @@ public class RtmpClient {
     }
 
 
-
-    public final static int OPEN_ERROR_ALLOC = -1;
-    public final static int OPEN_ERROR_SETUP_URL = -2;
-    public final static int OPEN_ERROR_CONNECT = -3;
-    public final static int OPEN_ERROR_CONNECT_STREAM = -4;
     public final static int OPEN_SUCCESS = 1;
+
+    public static class RtmpIOException extends IOException {
+
+        /**
+         * it means there is a problem in memory allocation
+         */
+        public final static int OPEN_ALLOC = -1;
+
+        /**
+         * it means there is a problem in setting url, check the rtmp url
+         */
+        public final static int OPEN_SETUP_URL = -2;
+
+        /**
+         *  it means there is a problem in connecting to the rtmp server,
+         *  check there is an active network connection,
+         *  check rtmp server is running,
+         */
+        public final static int OPEN_CONNECT = -3;
+
+        /**
+         *  it means there is a problem in connecting stream
+         */
+        public final static int OPEN_CONNECT_STREAM = -4;
+
+
+        public final int errorCode;
+
+        public RtmpIOException(int errorCode, String message) {
+            super(message);
+            this.errorCode = errorCode;
+        }
+
+    }
 
     /**
      * opens the rtmp url
@@ -28,14 +57,11 @@ public class RtmpClient {
      * if connection is for getting stream it is false
      * @return return a minus value if it fails
      * returns
-     * {@link #OPEN_ERROR_ALLOC} if there is a problem in memory allocation
-     * {@link #OPEN_ERROR_SETUP_URL} if there is a problem in setting url
-     * {@link #OPEN_ERROR_CONNECT} if there is a problem in connecting to the rtmp server
-     * {@link #OPEN_ERROR_CONNECT_STREAM} if there is a problem in connecting stream
+
      *
-     * returns {@link #OPEN_SUCCESS} if it is successful
+     * returns {@link #OPEN_SUCCESS} if it is successful, throws RtmpIOException if it is failed
      */
-    public native int open(String url, boolean isPublishMode);
+    public native int open(String url, boolean isPublishMode) throws RtmpIOException;
 
     /**
      * read data from rtmp connection
