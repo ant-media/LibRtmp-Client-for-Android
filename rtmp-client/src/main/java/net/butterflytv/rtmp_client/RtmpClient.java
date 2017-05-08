@@ -41,11 +41,17 @@ public class RtmpClient {
 
         public final int errorCode;
 
-        public RtmpIOException(int errorCode, String message) {
-            super(message);
+        public RtmpIOException(int errorCode) {
             this.errorCode = errorCode;
         }
 
+    }
+
+    public void open(String url, boolean isPublishMode) throws RtmpIOException {
+        int result = nativeOpen(url, isPublishMode);
+        if (result != OPEN_SUCCESS) {
+            throw new RtmpIOException(result);
+        }
     }
 
     /**
@@ -61,7 +67,7 @@ public class RtmpClient {
      *
      * returns {@link #OPEN_SUCCESS} if it is successful, throws RtmpIOException if it is failed
      */
-    public native int open(String url, boolean isPublishMode) throws RtmpIOException;
+    private native int nativeOpen(String url, boolean isPublishMode);
 
     /**
      * read data from rtmp connection
