@@ -81,10 +81,9 @@ public class RtmpClient {
      * @return
      * number of bytes to be read
      *
-     * if it returns 0, it means stream is complete
+     * if it returns -1, it means stream is complete
      *  and close function can be called.
      *
-     * There is no negative return value
      *
      *  @throws IOException if connection is not opened or connection to server is lost
      *

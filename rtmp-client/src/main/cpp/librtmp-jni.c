@@ -77,7 +77,9 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_read
         (*env)->SetByteArrayRegion(env, data_, offset, readCount, data);  // copy
     }
     free(data);
-
+    if (readCount == 0) {
+        return -1;
+    }
  	return readCount;
 }
 
