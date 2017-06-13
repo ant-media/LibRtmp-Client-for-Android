@@ -39,7 +39,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_seek
  * Method:    pause
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
+JNIEXPORT bool JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
   (JNIEnv *, jobject, jint);
 
 /*
@@ -47,14 +47,14 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
  * Method:    close
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_close
+JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_close
   (JNIEnv *, jobject);
 
 JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_open(JNIEnv *env, jobject instance, jstring url,
                                                    jboolean isPublishMode);
 
-JNIEXPORT jint JNICALL
+JNIEXPORT bool JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject instance);
 
 JNIEXPORT void JNICALL
