@@ -117,7 +117,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_seek
  * Method:    pause
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
+JNIEXPORT bool JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
         (JNIEnv * env, jobject thiz, jint pauseTime) {
 
     if (rtmp == NULL) {
@@ -131,29 +131,28 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
  * Method:    close
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_close
+JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_close
         (JNIEnv * env, jobject thiz) {
 
     if (rtmp != NULL) {
         RTMP_Close(rtmp);
         RTMP_Free(rtmp);
     }
-    return 0;
 }
 
 
-JNIEXPORT jint JNICALL
+JNIEXPORT bool JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_isConnected(JNIEnv *env, jobject instance)
 {
     if (rtmp == NULL) {
-        return 0;
+        return false;
     }
      int connected = RTMP_IsConnected(rtmp);
      if (connected) {
-        return 1;
+        return true;
      }
      else {
-        return 0;
+        return false;
      }
 }
 

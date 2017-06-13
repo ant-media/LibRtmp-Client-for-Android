@@ -100,21 +100,25 @@ public class RtmpClient {
      */
     public native int write(byte[] data) throws IOException;
 
-    public native int seek(int seekTime);
-
-    public native int pause(int pause);
 
     /**
      *
-     * @return 1 if it is connected
-     * 0 if it is not connected
+     * @param pause
+     * @return true if stream can be paused, returns false if it is not paused
      */
-    public native int isConnected();
+    public native boolean pause(int pause);
+
+    /**
+     *
+     * @return true if it is connected
+     * false if it is not connected
+     */
+    public native boolean isConnected();
 
     /**
      * closes the connection. Dont forget to call
      * @return 0
      */
-    public native int close();
+    public native void close();
 
 }
