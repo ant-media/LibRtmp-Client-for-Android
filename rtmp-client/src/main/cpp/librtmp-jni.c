@@ -120,12 +120,17 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_seek
  * Signature: (I)I
  */
 JNIEXPORT bool JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
-        (JNIEnv * env, jobject thiz, jint pauseTime) {
+        (JNIEnv * env, jobject thiz, jboolean pause) {
 
     if (rtmp == NULL) {
         throwIOException(env, "First call open function");
     }
-    return RTMP_Pause(rtmp, pauseTime);
+
+    int DoPause = 0;
+    if (pause == JNI_TRUE) {
+        DoPause = 1;
+    }
+    return RTMP_Pause(rtmp, DoPause);
 }
 
 /*

@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_seek
  * Signature: (I)I
  */
 JNIEXPORT bool JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_pause
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jboolean);
 
 /*
  * Class:     net_butterflytv_rtmp_client_RtmpClient

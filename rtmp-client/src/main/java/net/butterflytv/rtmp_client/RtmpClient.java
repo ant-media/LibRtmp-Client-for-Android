@@ -101,11 +101,16 @@ public class RtmpClient {
 
 
     /**
-     *
      * @param pause
-     * @return true if stream can be paused, returns false if it is not paused
+     * if pause is true then stream is going to be paused
+     *
+     * If pause is false, it unpauses the stream and it is ready to to play again
+     *
+     * @return true if it is successfull else returns false
      */
-    public native boolean pause(int pause);
+    public native boolean pause(boolean pause);
+
+
 
     /**
      *
@@ -115,8 +120,8 @@ public class RtmpClient {
     public native boolean isConnected();
 
     /**
+     *
      * closes the connection. Dont forget to call
-     * @return 0
      */
     public native void close();
 
