@@ -90,7 +90,7 @@ ext {
     siteUrl = 'https://github.com/ButterflyTV/Librtmp-Client-for-Android'
     gitUrl = 'https://github.com/ButterflyTV/LibRtmp-Client-for-Android.git'
 
-    libraryVersion = '0.2.6.1'
+    libraryVersion = '0.2.7'
 
     developerId = 'mekya'
     developerName = 'Ahmet Oguz Mermerkaya'
