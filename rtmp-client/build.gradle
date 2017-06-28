@@ -6,7 +6,7 @@ android {
     buildToolsVersion  "25.0.3"
     defaultConfig {
         // applicationId "io.antmedia.rtmpclient"
-        minSdkVersion 18
+        minSdkVersion 21 // sdk level 21 lets ndk generate resources for archs such as arm64.
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
