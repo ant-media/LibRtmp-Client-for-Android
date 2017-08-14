@@ -13,6 +13,7 @@ public class RtmpClient {
 
 
     public final static int OPEN_SUCCESS = 1;
+    private long rtmpPointer = 0;
 
     public static class RtmpIOException extends IOException {
 
@@ -48,11 +49,14 @@ public class RtmpClient {
     }
 
     public void open(String url, boolean isPublishMode) throws RtmpIOException {
-        int result = nativeOpen(url, isPublishMode);
+        rtmpPointer = nativeAlloc();
+        int result = nativeOpen(url, isPublishMode, rtmpPointer);
         if (result != OPEN_SUCCESS) {
             throw new RtmpIOException(result);
         }
     }
+
+    private native long nativeAlloc();
 
     /**
      * opens the rtmp url
@@ -67,7 +71,7 @@ public class RtmpClient {
      *
      * returns {@link #OPEN_SUCCESS} if it is successful, throws RtmpIOException if it is failed
      */
-    private native int nativeOpen(String url, boolean isPublishMode);
+    private native int nativeOpen(String url, boolean isPublishMode, long rtmpPointer);
 
     /**
      * read data from rtmp connection
@@ -88,8 +92,11 @@ public class RtmpClient {
      *  @throws IOException if connection is not opened or connection to server is lost
      *
      */
+    public int read(byte[] data, int offset, int size) throws IOException {
+        return nativeRead(data, offset, size, rtmpPointer);
+    }
 
-    public native int read(byte[] data, int offset, int size) throws IOException;
+    private native int nativeRead(byte[] data, int offset, int size, long rtmpPointer) throws IOException;
 
     /**
      *
@@ -97,7 +104,11 @@ public class RtmpClient {
      * @return number of bytes written
      * @throws IOException if connection is not opened or connection to server is lost
      */
-    public native int write(byte[] data) throws IOException;
+    public int write(byte[] data) throws IOException {
+        return nativeWrite(data, rtmpPointer);
+    }
+
+    private native int nativeWrite(byte[] data, long rtmpPointer) throws IOException;
 
 
     /**
@@ -108,7 +119,10 @@ public class RtmpClient {
      *
      * @return true if it is successfull else returns false
      */
-    public native boolean pause(boolean pause);
+    public boolean pause(boolean pause) {
+        return nativePause(pause, rtmpPointer);
+    }
+    private native boolean nativePause(boolean pause, long rtmpPointer);
 
 
 
@@ -117,12 +131,20 @@ public class RtmpClient {
      * @return true if it is connected
      * false if it is not connected
      */
-    public native boolean isConnected();
+    public boolean isConnected() {
+        return nativeIsConnected(rtmpPointer);
+    }
+
+    private native boolean nativeIsConnected(long rtmpPointer);
 
     /**
      *
      * closes the connection. Dont forget to call
      */
-    public native void close();
+    public void close() {
+        nativeClose(rtmpPointer);
+    }
+
+    private native void nativeClose(long rtmpPointer);
 
 }
