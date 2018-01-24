@@ -52,6 +52,7 @@ public class RtmpClient {
         rtmpPointer = nativeAlloc();
         int result = nativeOpen(url, isPublishMode, rtmpPointer);
         if (result != OPEN_SUCCESS) {
+            rtmpPointer = 0;
             throw new RtmpIOException(result);
         }
     }
