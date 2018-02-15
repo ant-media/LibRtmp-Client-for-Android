@@ -12,7 +12,7 @@ public class RtmpClient {
     }
 
 
-    public final static int OPEN_SUCCESS = 1;
+    private final static int OPEN_SUCCESS = 1;
     private long rtmpPointer = 0;
 
     public static class RtmpIOException extends IOException {
@@ -144,6 +144,7 @@ public class RtmpClient {
      */
     public void close() {
         nativeClose(rtmpPointer);
+        rtmpPointer = 0;
     }
 
     private native void nativeClose(long rtmpPointer);
