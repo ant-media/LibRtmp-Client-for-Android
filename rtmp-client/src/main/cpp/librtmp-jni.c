@@ -38,8 +38,8 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
         return -1;
     }
 
-	RTMP_Init(rtmp);
-	int ret = RTMP_SetupURL(rtmp, url);
+    RTMP_Init(rtmp);
+    int ret = RTMP_SetupURL(rtmp, url);
 
     if (!ret) {
         RTMP_Free(rtmp);
@@ -49,12 +49,12 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
         RTMP_EnableWrite(rtmp);
     }
 
-	ret = RTMP_Connect(rtmp, NULL);
+    ret = RTMP_Connect(rtmp, NULL);
     if (!ret) {
         RTMP_Free(rtmp);
         return -3;
     }
-	ret = RTMP_ConnectStream(rtmp, 0);
+    ret = RTMP_ConnectStream(rtmp, 0);
 
     if (!ret) {
         return -4;
@@ -93,7 +93,7 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
     if (readCount == 0) {
         return -1;
     }
- 	return readCount;
+    return readCount;
 }
 
 /*
