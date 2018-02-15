@@ -14,7 +14,7 @@
 //RTMP *rtmp = NULL;
 
 
-JNIEXPORT JNICALL jlong Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
+JNIEXPORT jlong JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
         (JNIEnv* env, jobject thiz) {
     RTMP *rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
@@ -28,7 +28,7 @@ JNIEXPORT JNICALL jlong Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
  * Method:    open
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
+JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
         (JNIEnv* env, jobject thiz, jstring url_, jboolean isPublishMode, jlong rtmpPointer) {
 
     const char *url = (*env)->GetStringUTFChars(env, url_, 0);
@@ -70,7 +70,7 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
  * Method:    read
  * Signature: ([CI)I
  */
-JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
+JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
         (JNIEnv* env, jobject thiz, jbyteArray data_, jint offset, jint size, jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
@@ -101,7 +101,7 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
  * Method:    write
  * Signature: ([CI)I
  */
-JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
+JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
         (JNIEnv* env, jobject thiz, jcharArray data, jint size, jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
@@ -122,7 +122,7 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
  * Method:    seek
  * Signature: (I)I
  */
-JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_seek
+JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_seek
         (JNIEnv* env, jobject thiz, jint seekTime) {
     return 0;
 }
@@ -132,7 +132,7 @@ JNIEXPORT JNICALL jint Java_net_butterflytv_rtmp_1client_RtmpClient_seek
  * Method:    pause
  * Signature: (I)I
  */
-JNIEXPORT JNICALL jboolean Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause
+JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause
         (JNIEnv* env, jobject thiz, jboolean pause, jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
@@ -144,7 +144,11 @@ JNIEXPORT JNICALL jboolean Java_net_butterflytv_rtmp_1client_RtmpClient_nativePa
     if (pause == JNI_TRUE) {
         DoPause = 1;
     }
-    return RTMP_Pause(rtmp, DoPause);
+    int paused = RTMP_Pause(rtmp, DoPause);
+    if (paused) {
+        return JNI_TRUE;
+    }
+    return JNI_FALSE;
 }
 
 /*
@@ -152,7 +156,7 @@ JNIEXPORT JNICALL jboolean Java_net_butterflytv_rtmp_1client_RtmpClient_nativePa
  * Method:    close
  * Signature: ()I
  */
-JNIEXPORT JNICALL void Java_net_butterflytv_rtmp_1client_RtmpClient_nativeClose
+JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeClose
         (JNIEnv* env, jobject thiz, jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
@@ -163,7 +167,7 @@ JNIEXPORT JNICALL void Java_net_butterflytv_rtmp_1client_RtmpClient_nativeClose
 }
 
 
-JNIEXPORT JNICALL jboolean Java_net_butterflytv_rtmp_1client_RtmpClient_nativeIsConnected
+JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeIsConnected
         (JNIEnv* env, jobject thiz, jlong rtmpPointer)
 {
     RTMP *rtmp = (RTMP *) rtmpPointer;
