@@ -114,7 +114,12 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
         throwIOException(env, "Connection to server is lost");
     }
 
-    return RTMP_Write(rtmp, data, size);
+    jbyte* buf = malloc(size);
+    (*env)->GetByteArrayRegion(env, data, offset, size, buf);
+    int result = RTMP_Write(rtmp, buf, size);
+    free(buf);
+
+    return result;
 }
 
 /*
