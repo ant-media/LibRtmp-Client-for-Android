@@ -49,7 +49,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_close
 
 JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected
         (JNIEnv* env, jobject thiz) {
-    return rtmp_is_connected();
+    return rtmp_is_connected() ? true : false;
 }
 
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_read
