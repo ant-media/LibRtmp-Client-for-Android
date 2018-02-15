@@ -31,7 +31,7 @@ JNIEXPORT jlong JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
         (JNIEnv* env, jobject thiz, jstring url_, jboolean isPublishMode, jlong rtmpPointer) {
 
-    const char *url = (*env)->GetStringUTFChars(env, url_, JNI_FALSE);
+    const char *url = (*env)->GetStringUTFChars(env, url_, NULL);
     RTMP *rtmp = (RTMP *) rtmpPointer;
    // rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
@@ -71,7 +71,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
  * Signature: ([CI)I
  */
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
-        (JNIEnv* env, jobject thiz, jbyteArray data_, jsize offset, jsize size, jlong rtmpPointer) {
+        (JNIEnv* env, jobject thiz, jbyteArray data_, jint offset, jint size, jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
@@ -102,7 +102,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
  * Signature: ([CI)I
  */
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
-        (JNIEnv* env, jobject thiz, jcharArray data, jsize size, jlong rtmpPointer) {
+        (JNIEnv* env, jobject thiz, jbyteArray data, jint offset, jint size, jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {

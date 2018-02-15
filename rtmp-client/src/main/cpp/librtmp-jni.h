@@ -24,7 +24,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
  * Signature: ([CI)I
  */
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
-  (JNIEnv* env, jobject thiz, jbyteArray data, jsize offset, jsize size, jlong rtmpPointer);
+  (JNIEnv* env, jobject thiz, jbyteArray data, jint offset, jint size, jlong rtmpPointer);
 
 /*
  * Class:     net_butterflytv_rtmp_client_RtmpClient
@@ -32,7 +32,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
  * Signature: ([CI)I
  */
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
-  (JNIEnv* env, jobject thiz, jcharArray data, jsize size, jlong rtmpPointer);
+  (JNIEnv* env, jobject thiz, jbyteArray data, jint offset, jint size, jlong rtmpPointer);
 
 /*
  * Class:     net_butterflytv_rtmp_client_RtmpClient
@@ -68,7 +68,7 @@ JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_write_1flv_1h
 
 JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1open
   (JNIEnv* env, jobject thiz, jstring filename) {
-    const char *cfilename = (*env)->GetStringUTFChars(env, filename, JNI_FALSE);
+    const char *cfilename = (*env)->GetStringUTFChars(env, filename, NULL);
 
     flv_file_open(cfilename);
 
@@ -86,7 +86,7 @@ JNIEXPORT jlong JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
   (JNIEnv* env, jobject thiz);
 
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_read
-  (JNIEnv* env, jobject thiz, jbyteArray data, jsize offset, jsize size);
+  (JNIEnv* env, jobject thiz, jbyteArray data, jint offset, jint size);
 
 JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected
   (JNIEnv* env, jobject thiz);

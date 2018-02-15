@@ -20,7 +20,7 @@ public class RTMPMuxer {
      * @return 0 if it writes network successfully
      * -1 if it could not write
      */
-    public native int writeVideo(byte[] data, int offset, int length, int timestamp);
+    public native int writeVideo(byte[] data, int offset, int length, long timestamp);
 
     /**
      * Write raw aac data
@@ -31,7 +31,7 @@ public class RTMPMuxer {
      * @return 0 if it writes network successfully
      * -1 if it could not write
      */
-    public native int writeAudio(byte[] data, int offset, int length, int timestamp);
+    public native int writeAudio(byte[] data, int offset, int length, long timestamp);
 
 
     public native int read(byte[] data, int offset, int size);
@@ -50,5 +50,5 @@ public class RTMPMuxer {
      * @return 1 if it is connected
      * 0 if it is not connected
      */
-    public native int isConnected();
+    public native boolean isConnected();
 }
