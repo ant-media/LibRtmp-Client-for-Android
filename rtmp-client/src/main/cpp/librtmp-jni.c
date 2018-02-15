@@ -31,7 +31,7 @@ JNIEXPORT jlong JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
         (JNIEnv* env, jobject thiz, jstring url_, jboolean isPublishMode, jlong rtmpPointer) {
 
-    const char *url = (*env)->GetStringUTFChars(env, url_, JNI_FALSE);
+    const char *url = (*env)->GetStringUTFChars(env, url_, NULL);
     RTMP *rtmp = (RTMP *) rtmpPointer;
    // rtmp = RTMP_Alloc();
     if (rtmp == NULL) {

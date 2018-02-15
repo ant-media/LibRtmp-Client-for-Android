@@ -68,7 +68,7 @@ JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_write_1flv_1h
 
 JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1open
   (JNIEnv* env, jobject thiz, jstring filename) {
-    const char *cfilename = (*env)->GetStringUTFChars(env, filename, JNI_FALSE);
+    const char *cfilename = (*env)->GetStringUTFChars(env, filename, NULL);
 
     flv_file_open(cfilename);
 
