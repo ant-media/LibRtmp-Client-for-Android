@@ -3799,7 +3799,8 @@ HandShake(RTMP *r, int FP9HandShake)
   if (ReadN(r, serversig, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
     return FALSE;
 
-  bMatch = (memcmp(serversig, clientsig, RTMP_SIG_SIZE) == 0);
+  // ignore the timestamp in case the server changed it.
+  bMatch = (memcmp(serversig + 4, clientsig + 4, RTMP_SIG_SIZE - 4) == 0);
   if (!bMatch)
     {
       RTMP_Log(RTMP_LOGWARNING, "%s, client signature does not match!", __FUNCTION__);
