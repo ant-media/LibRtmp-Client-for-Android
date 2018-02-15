@@ -8,6 +8,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import net.butterflytv.rtmp_client.RTMPMuxer;
 import net.butterflytv.rtmp_client.RtmpClient;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,13 @@ public class ApplicationTest {
 
     RTMPMuxer rtmpMuxer;
 
+    @After
+    public void afterTest() {
+        if (rtmpMuxer != null) {
+            rtmpMuxer.close();
+            rtmpMuxer = null;
+        }
+    }
 
     @Test
     public void testRTMPClientThrowException() {
