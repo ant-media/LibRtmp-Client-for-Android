@@ -161,8 +161,7 @@ JNIEXPORT void JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeClose
 
 
 JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeIsConnected
-        (JNIEnv* env, jobject thiz, jlong rtmpPointer)
-{
+        (JNIEnv* env, jobject thiz, jlong rtmpPointer) {
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
         return false;
