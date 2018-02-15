@@ -20,7 +20,7 @@ JNIEXPORT jlong JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
     if (rtmp == NULL) {
         return -1;
     }
-    return (long)rtmp;
+    return (jlong)rtmp;
 }
 
 /*
@@ -31,7 +31,7 @@ JNIEXPORT jlong JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc
 JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen
         (JNIEnv* env, jobject thiz, jstring url_, jboolean isPublishMode, jlong rtmpPointer) {
 
-    const char *url = (*env)->GetStringUTFChars(env, url_, 0);
+    const char *url = (*env)->GetStringUTFChars(env, url_, JNI_FALSE);
     RTMP *rtmp = (RTMP *) rtmpPointer;
    // rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
@@ -140,15 +140,8 @@ JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativePa
         throwIOException(env, "First call open function");
     }
 
-    int DoPause = 0;
-    if (pause == JNI_TRUE) {
-        DoPause = 1;
-    }
-    int paused = RTMP_Pause(rtmp, DoPause);
-    if (paused) {
-        return JNI_TRUE;
-    }
-    return JNI_FALSE;
+    int paused = RTMP_Pause(rtmp, pause);
+    return paused ? true : false;
 }
 
 /*
@@ -174,13 +167,8 @@ JNIEXPORT jboolean JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeIs
     if (rtmp == NULL) {
         return false;
     }
-     int connected = RTMP_IsConnected(rtmp);
-     if (connected) {
-        return true;
-     }
-     else {
-        return false;
-     }
+    int connected = RTMP_IsConnected(rtmp);
+    return connected ? true : false;
 }
 
 jint throwIOException (JNIEnv* env, char* message)

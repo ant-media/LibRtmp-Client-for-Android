@@ -10,7 +10,7 @@
  */
 JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv* env, jobject thiz, jstring url_, jint video_width, jint video_height) {
-    const char *url = (*env)->GetStringUTFChars(env, url_, 0);
+    const char *url = (*env)->GetStringUTFChars(env, url_, JNI_FALSE);
 
     int result = rtmp_open_for_write(url, video_width, video_height);
 
@@ -52,7 +52,7 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_close(JNIEnv* env, jobject thiz) {
 
 }
 
-JNIEXPORT jint JNICALL
+JNIEXPORT jboolean JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv* env, jobject thiz) {
     return rtmp_is_connected();
 }
