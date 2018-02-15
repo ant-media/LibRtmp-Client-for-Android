@@ -82,7 +82,7 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead
         throwIOException(env, "Connection to server is lost");
     }
 
-    char* data = malloc(size*sizeof(char));
+    char* data = malloc(size);
 
     int readCount = RTMP_Read(rtmp, data, size);
 
