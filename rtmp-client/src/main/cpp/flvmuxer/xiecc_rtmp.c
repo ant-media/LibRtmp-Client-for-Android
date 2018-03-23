@@ -403,14 +403,17 @@ static uint8_t * get_nal(uint32_t *len, uint8_t **offset, uint8_t *start, uint32
     p = q;
     // find a second start code in the data, there may be second code in data or there may not
     while(1) {
+        // Do not access not allowed memory
+        if ((p - start) >= total-2) {
+            p = &p[2];
+            break;
+        }
+
         info =  find_start_code(p, 3);
 
         if (info == 1)
             break;
         p++;
-        if ((p - start) >= total)
-            //return NULL;
-            break;
     }
 
     // length of the nal unit
