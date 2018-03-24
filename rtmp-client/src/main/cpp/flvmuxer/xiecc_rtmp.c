@@ -385,32 +385,34 @@ static uint8_t * get_nal(uint32_t *len, uint8_t **offset, uint8_t *start, uint32
     uint8_t *p  =  *offset;
     *len = 0;
 
-    //p=offset
-    // p - start >= total means reach of the end of the packet
-    if ((p - start) >= total)
-        return NULL;
-
     while(1) {
+        //p=offset
+        // p - start >= total means reach of the end of the packet
+        // HINT "-3": Do not access not allowed memory
+        if ((p - start) >= total-3)
+            return NULL;
+
         info =  find_start_code(p, 3);
         //if info equals to 1, it means it find the start code
         if (info == 1)
             break;
         p++;
-        if ((p - start) >= total)
-            return NULL;
     }
     q = p + 4; // add 4 for first bytes 0 0 0 1
     p = q;
     // find a second start code in the data, there may be second code in data or there may not
     while(1) {
+        // HINT "-3": Do not access not allowed memory
+        if ((p - start) >= total-3) {
+            p = start + total;
+            break;
+        }
+
         info =  find_start_code(p, 3);
 
         if (info == 1)
             break;
         p++;
-        if ((p - start) >= total)
-            //return NULL;
-            break;
     }
 
     // length of the nal unit
