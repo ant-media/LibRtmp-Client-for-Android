@@ -1452,7 +1452,7 @@ ReadN(RTMP *r, char *buffer, int n)
 	    }
 	}
       nRead = ((n < avail) ? n : avail);
-      if (nRead > 0)
+      if (nRead > 0 && r->m_sb.sb_start != NULL)
 	{
 	  memcpy(ptr, r->m_sb.sb_start, nRead);
 	  r->m_sb.sb_start += nRead;
