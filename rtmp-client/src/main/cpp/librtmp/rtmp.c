@@ -909,6 +909,15 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
   r->m_sb.sb_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (r->m_sb.sb_socket != -1)
     {
+      int err;
+      SET_RCVTIMEO(tv, r->Link.timeout);
+
+      err = setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+      if (err)
+        {
+          RTMP_Log(RTMP_LOGERROR, "Error %d setting SO_SNDTIMEO", errno);
+        }
+
       if (connect(r->m_sb.sb_socket, service, sizeof(struct sockaddr)) < 0)
 	{
 	  int err = GetSockError();

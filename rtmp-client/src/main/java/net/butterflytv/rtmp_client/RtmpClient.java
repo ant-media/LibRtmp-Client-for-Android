@@ -13,7 +13,17 @@ public class RtmpClient {
 
 
     private final static int OPEN_SUCCESS = 1;
+    private final static int TIMEOUT = 10;
     private long rtmpPointer = 0;
+
+    /* Timeout value in seconds */
+    private int timeout = TIMEOUT;
+    /* Sets the timeout variable */
+    public void setTimeout(int timeout) {
+        if (timeout > 0) {
+            this.timeout = timeout;
+        }
+    }
 
     public static class RtmpIOException extends IOException {
 
@@ -50,7 +60,7 @@ public class RtmpClient {
 
     public void open(String url, boolean isPublishMode) throws RtmpIOException {
         rtmpPointer = nativeAlloc();
-        int result = nativeOpen(url, isPublishMode, rtmpPointer);
+        int result = nativeOpen(url, isPublishMode, rtmpPointer, timeout);
         if (result != OPEN_SUCCESS) {
             rtmpPointer = 0;
             throw new RtmpIOException(result);
@@ -72,7 +82,7 @@ public class RtmpClient {
      *
      * returns {@link #OPEN_SUCCESS} if it is successful, throws RtmpIOException if it is failed
      */
-    private native int nativeOpen(String url, boolean isPublishMode, long rtmpPointer);
+    private native int nativeOpen(String url, boolean isPublishMode, long rtmpPointer, int timeout);
 
     /**
      * read data from rtmp connection
