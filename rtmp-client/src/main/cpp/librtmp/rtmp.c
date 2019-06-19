@@ -2223,7 +2223,7 @@ SendPlay(RTMP *r)
       if (r->Link.seekTime > 0.0)
 	enc = AMF_EncodeNumber(enc, pend, r->Link.seekTime);	/* resume from here */
       else
-	enc = AMF_EncodeNumber(enc, pend, 0.0);	/*-2000.0);*/ /* recorded as default, -2000.0 is not reliable since that freezes the player if the stream is not found */
+	enc = AMF_EncodeNumber(enc, pend, -2000.0); /* corresponds to -2 in the comment above */
     }
   if (!enc)
     return FALSE;
