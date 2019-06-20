@@ -3765,7 +3765,7 @@ HandShake(RTMP *r, int FP9HandShake)
     clientsig[i] = 0xff;
 #else
   for (i = 8; i < RTMP_SIG_SIZE; i++)
-    clientsig[i] = (char)(rand() % 256);
+    clientsig[i] = (char)(rand() & 255);
 #endif
 
   if (!WriteN(r, clientbuf, RTMP_SIG_SIZE + 1))
@@ -3837,7 +3837,7 @@ SHandShake(RTMP *r)
     serversig[i] = 0xff;
 #else
   for (i = 8; i < RTMP_SIG_SIZE; i++)
-    serversig[i] = (char)(rand() % 256);
+    serversig[i] = (char)(rand() & 255);
 #endif
 
   if (!WriteN(r, serverbuf, RTMP_SIG_SIZE + 1))

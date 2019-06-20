@@ -141,7 +141,7 @@ void RTMP_LogHexString(int level, const uint8_t *data, unsigned long len)
 	line[0] = '\0';
 
 	for ( i = 0 ; i < len ; i++ ) {
-		int n = i % 16;
+		int n = i & 15;
 		unsigned off;
 
 		if( !n ) {
