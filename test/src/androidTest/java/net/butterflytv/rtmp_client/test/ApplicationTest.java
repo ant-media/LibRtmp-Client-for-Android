@@ -8,15 +8,12 @@ import android.test.suitebuilder.annotation.LargeTest;
 import net.butterflytv.rtmp_client.RTMPMuxer;
 import net.butterflytv.rtmp_client.RtmpClient;
 
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-
-import static android.test.MoreAsserts.assertNotEqual;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 
@@ -34,6 +31,13 @@ public class ApplicationTest {
 
     RTMPMuxer rtmpMuxer;
 
+    @After
+    public void afterTest() {
+        if (rtmpMuxer != null) {
+            rtmpMuxer.close();
+            rtmpMuxer = null;
+        }
+    }
 
     @Test
     public void testRTMPClientThrowException() {
@@ -54,13 +58,13 @@ public class ApplicationTest {
 
 
         rtmpMuxer = new RTMPMuxer();
-        assertEquals(rtmpMuxer.isConnected(), 0);
+        assertFalse(rtmpMuxer.isConnected());
 
         int result = rtmpMuxer.open("rtmp://192.168.1.23/live/test",0, 0);
 
         assertTrue("open a local rtmp server", result > 0);
 
-        assertEquals(rtmpMuxer.isConnected(), 1);
+        assertTrue(rtmpMuxer.isConnected());
 
         System.out.println("Waiting for 25 seconds doing nothing");
 
@@ -95,7 +99,7 @@ public class ApplicationTest {
         }
         */
 
-        assertEquals(rtmpMuxer.isConnected(), 0);
+        assertFalse(rtmpMuxer.isConnected());
 
 
     }
@@ -112,13 +116,13 @@ public class ApplicationTest {
             public void run() {
 
                 rtmpMuxer = new RTMPMuxer();
-                assertEquals(rtmpMuxer.isConnected(), 0);
+                assertFalse(rtmpMuxer.isConnected());
 
                 int result = rtmpMuxer.open("rtmp://192.168.1.23/live/new_stream", 0, 0);
 
                 assertTrue("open a local rtmp server", result > 0);
 
-                assertEquals(rtmpMuxer.isConnected(), 1);
+                assertTrue(rtmpMuxer.isConnected());
 
                 try {
                     Thread.sleep(3000);
@@ -127,11 +131,11 @@ public class ApplicationTest {
                 }
 
                 rtmpMuxer.close();
-                assertEquals(rtmpMuxer.isConnected(), 0);
+                assertFalse(rtmpMuxer.isConnected());
 
 
 
-                assertEquals(rtmpMuxer.isConnected(), 0);
+                assertFalse(rtmpMuxer.isConnected());
 
             }
         };
@@ -144,7 +148,7 @@ public class ApplicationTest {
             e.printStackTrace();
         }
 
-        assertEquals(rtmpMuxer.isConnected(), 0);
+        assertFalse(rtmpMuxer.isConnected());
 
     }
 

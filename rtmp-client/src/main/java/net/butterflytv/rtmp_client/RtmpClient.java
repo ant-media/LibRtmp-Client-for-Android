@@ -12,7 +12,7 @@ public class RtmpClient {
     }
 
 
-    public final static int OPEN_SUCCESS = 1;
+    private final static int OPEN_SUCCESS = 1;
     private long rtmpPointer = 0;
 
     public static class RtmpIOException extends IOException {
@@ -106,10 +106,20 @@ public class RtmpClient {
      * @throws IOException if connection is not opened or connection to server is lost
      */
     public int write(byte[] data) throws IOException {
-        return nativeWrite(data, rtmpPointer);
+        return write(data, 0, data.length);
     }
 
-    private native int nativeWrite(byte[] data, long rtmpPointer) throws IOException;
+    /**
+     *
+     * @param data
+     * @return number of bytes written
+     * @throws IOException if connection is not opened or connection to server is lost
+     */
+    public int write(byte[] data, int offset, int size) throws IOException {
+        return nativeWrite(data, offset, size, rtmpPointer);
+    }
+
+    private native int nativeWrite(byte[] data, int offset, int size, long rtmpPointer) throws IOException;
 
 
     /**
@@ -144,6 +154,7 @@ public class RtmpClient {
      */
     public void close() {
         nativeClose(rtmpPointer);
+        rtmpPointer = 0;
     }
 
     private native void nativeClose(long rtmpPointer);
