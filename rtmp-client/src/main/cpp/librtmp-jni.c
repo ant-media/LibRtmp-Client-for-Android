@@ -31,7 +31,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc(JNIEnv* env, jobject th
 JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thiz, jstring url_,
                                                         jboolean isPublishMode, jlong rtmpPointer,
-                                                        jint timeout) {
+                                                        jint sendTimeoutInMs, jint receiveTimeoutInS) {
 
     const char *url = (*env)->GetStringUTFChars(env, url_, NULL);
     RTMP *rtmp = (RTMP *) rtmpPointer;
@@ -41,7 +41,8 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
     }
 
     RTMP_Init(rtmp);
-    rtmp->Link.timeout = timeout;
+    rtmp->Link.timeout = receiveTimeoutInS;
+    rtmp->Link.sendTimeoutInMs = sendTimeoutInMs;
     int ret = RTMP_SetupURL(rtmp, url);
 
     if (!ret) {

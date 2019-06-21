@@ -910,9 +910,11 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
   if (r->m_sb.sb_socket != -1)
     {
       int err;
-      SET_RCVTIMEO(tv, r->Link.timeout);
+      struct timeval send_timeout;
 
-      err = setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+      send_timeout.tv_sec = r->Link.sendTimeoutInMs / 1000;
+      send_timeout.tv_usec = (r->Link.sendTimeoutInMs % 1000) * 1000;
+      err = setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_SNDTIMEO, &send_timeout, sizeof(send_timeout));
       if (err)
         {
           RTMP_Log(RTMP_LOGERROR, "Error %d setting SO_SNDTIMEO", errno);
