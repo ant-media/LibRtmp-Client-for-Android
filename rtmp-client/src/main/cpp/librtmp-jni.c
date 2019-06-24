@@ -120,11 +120,13 @@ JNIEXPORT jint JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
         throwIOException(env, "First call open function");
+        return 0;
     }
 
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
         throwIOException(env, "Connection to server is lost");
+        return 0;
     }
 
     return RTMP_Write(rtmp, data, size);
@@ -152,6 +154,7 @@ JNIEXPORT bool JNICALL Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
         throwIOException(env, "First call open function");
+        return false;
     }
 
     int DoPause = 0;

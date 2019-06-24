@@ -4976,7 +4976,8 @@ RTMP_Read(RTMP *r, char *buf, int size)
 fail:
   switch (r->m_read.status) {
   case RTMP_READ_ERROR:  /* corrupted stream, resume failed */
-      SetSockError(EINVAL);
+    SetSockError(EINVAL);
+    return r->m_read.status;
   case RTMP_READ_EOF:
   case RTMP_READ_COMPLETE:
     return r->m_read.status;
