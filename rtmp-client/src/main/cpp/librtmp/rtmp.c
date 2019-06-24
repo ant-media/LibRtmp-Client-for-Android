@@ -4971,16 +4971,17 @@ int
 RTMP_Read(RTMP *r, char *buf, int size)
 {
   int nRead = 0, total = 0;
+  int8_t readStatus;
 
   /* can't continue */
 fail:
-  switch (r->m_read.status) {
+  readStatus = r->m_read.status;
+  switch (readStatus) {
   case RTMP_READ_ERROR:  /* corrupted stream, resume failed */
     SetSockError(EINVAL);
-    return r->m_read.status;
   case RTMP_READ_EOF:
   case RTMP_READ_COMPLETE:
-    return r->m_read.status;
+    return readStatus;
   default:
     break;
   }
