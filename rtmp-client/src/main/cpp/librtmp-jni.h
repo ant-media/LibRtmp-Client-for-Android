@@ -19,7 +19,7 @@ JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thiz,
                                                         jstring url, jboolean isPublishMode,
                                                         jlong rtmpPointer, jint sendTimeoutInMs,
-                                                        jint receiveTimeoutInS);
+                                                        jint receiveTimeoutInMs);
 
 /*
  * Class:     net_butterflytv_rtmp_client_RtmpClient

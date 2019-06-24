@@ -19,7 +19,7 @@ public class RtmpClient {
     /** Socket send timeout value in milliseconds */
     private int sendTimeoutInMs = TIMEOUT_IN_MS;
     /** Socket receive timeout value in seconds */
-    private int receiveTimeoutInS = (TIMEOUT_IN_MS / 1000);
+    private int receiveTimeoutInMs = TIMEOUT_IN_MS;
 
     public static class RtmpIOException extends IOException {
 
@@ -71,22 +71,23 @@ public class RtmpClient {
 
     /**
      *  Sets the socket's receive timeout value
-     * @param receiveTimeoutInS
-     * The receive timeout value for the rtmp socket in <b>seconds</b>.
+     * @param receiveTimeoutInMs
+     * The receive timeout value for the rtmp socket in milliseconds.
      * Parameter expects a non-zero positive integer and will reset timeout to the default value
-     * (10s) if zero or a negative integer is passed.
+     * (10000 ms) if zero or a negative integer is passed.
      *  */
-    public void setReceiveTimeoutInS(int receiveTimeoutInS) {
-        if (receiveTimeoutInS > 0) {
-            this.receiveTimeoutInS = receiveTimeoutInS;
+    public void setReceiveTimeoutInMs(int receiveTimeoutInMs) {
+        if (receiveTimeoutInMs > 0) {
+            this.receiveTimeoutInMs = receiveTimeoutInMs;
         } else {
-            this.receiveTimeoutInS = (TIMEOUT_IN_MS / 1000);
+            this.receiveTimeoutInMs = TIMEOUT_IN_MS;
         }
     }
 
     public void open(String url, boolean isPublishMode) throws RtmpIOException {
         rtmpPointer = nativeAlloc();
-        int result = nativeOpen(url, isPublishMode, rtmpPointer, sendTimeoutInMs, receiveTimeoutInS);
+        int result = nativeOpen(url, isPublishMode, rtmpPointer, sendTimeoutInMs,
+            receiveTimeoutInMs);
         if (result != OPEN_SUCCESS) {
             rtmpPointer = 0;
             throw new RtmpIOException(result);
@@ -109,7 +110,7 @@ public class RtmpClient {
      * returns {@link #OPEN_SUCCESS} if it is successful, throws RtmpIOException if it is failed
      */
     private native int nativeOpen(String url, boolean isPublishMode, long rtmpPointer,
-        int sendTimeoutInMs, int receiveTimeoutInS);
+        int sendTimeoutInMs, int receiveTimeoutInMs);
 
     /**
      * read data from rtmp connection

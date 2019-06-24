@@ -338,8 +338,8 @@ RTMP_Init(RTMP *r)
   r->m_nServerBW = 2500000;
   r->m_fAudioCodecs = 3191.0;
   r->m_fVideoCodecs = 252.0;
-  //making timeout value to 10 from 30
-  r->Link.timeout = 10;
+  //Changing units to milliseconds. Changing from 10 to 10000.
+  r->Link.timeout = 10000;
   r->Link.swfAge = 30;
 }
 
@@ -445,7 +445,7 @@ RTMP_SetupStream(RTMP *r,
 		 AVal *subscribepath,
 		 AVal *usherToken,
 		 int dStart,
-		 int dStop, int bLiveStream, long int timeout)
+		 int dStop, int bLiveStream, long int timeoutInMs)
 {
   RTMP_Log(RTMP_LOGDEBUG, "Protocol : %s", RTMPProtocolStrings[protocol&7]);
   RTMP_Log(RTMP_LOGDEBUG, "Hostname : %.*s", host->av_len, host->av_val);
@@ -474,7 +474,7 @@ RTMP_SetupStream(RTMP *r,
     RTMP_Log(RTMP_LOGDEBUG, "StopTime      : %d msec", dStop);
 
   RTMP_Log(RTMP_LOGDEBUG, "live     : %s", bLiveStream ? "yes" : "no");
-  RTMP_Log(RTMP_LOGDEBUG, "timeout  : %ld sec", timeout);
+  RTMP_Log(RTMP_LOGDEBUG, "timeoutInMs  : %ld sec", timeoutInMs);
 
 #ifdef CRYPTO
   if (swfSHA256Hash != NULL && swfSize > 0)
@@ -518,7 +518,7 @@ RTMP_SetupStream(RTMP *r,
   r->Link.stopTime = dStop;
   if (bLiveStream)
     r->Link.lFlags |= RTMP_LF_LIVE;
-  r->Link.timeout = timeout;
+  r->Link.timeout = timeoutInMs;
 
   r->Link.protocol = protocol;
   r->Link.hostname = *host;
@@ -949,7 +949,10 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
 
   /* set timeout */
   {
-    SET_RCVTIMEO(tv, r->Link.timeout);
+    struct timeval tv;
+
+    tv.tv_sec = r->Link.timeout / 1000;
+    tv.tv_usec = (r->Link.timeout % 1000) * 1000;
     if (setsockopt
         (r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)))
       {
