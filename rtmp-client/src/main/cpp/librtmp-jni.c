@@ -41,7 +41,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
     }
 
     RTMP_Init(rtmp);
-    rtmp->Link.timeout = receiveTimeoutInMs;
+    rtmp->Link.receiveTimeoutInMs = receiveTimeoutInMs;
     rtmp->Link.sendTimeoutInMs = sendTimeoutInMs;
     int ret = RTMP_SetupURL(rtmp, url);
 

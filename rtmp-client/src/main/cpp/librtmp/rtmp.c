@@ -338,8 +338,7 @@ RTMP_Init(RTMP *r)
   r->m_nServerBW = 2500000;
   r->m_fAudioCodecs = 3191.0;
   r->m_fVideoCodecs = 252.0;
-  //Changing units to milliseconds. Changing from 10 to 10000.
-  r->Link.timeout = 10000;
+  r->Link.receiveTimeoutInMs = 10000;
   r->Link.swfAge = 30;
 }
 
@@ -518,7 +517,7 @@ RTMP_SetupStream(RTMP *r,
   r->Link.stopTime = dStop;
   if (bLiveStream)
     r->Link.lFlags |= RTMP_LF_LIVE;
-  r->Link.timeout = timeoutInMs;
+  r->Link.receiveTimeoutInMs = timeoutInMs;
 
   r->Link.protocol = protocol;
   r->Link.hostname = *host;
@@ -585,7 +584,7 @@ static struct urlopt {
   	"Stream stop position in milliseconds" },
   { AVC("buffer"),    OFF(m_nBufferMS),        OPT_INT, 0,
   	"Buffer time in milliseconds" },
-  { AVC("timeout"),   OFF(Link.timeout),       OPT_INT, 0,
+  { AVC("timeout"),   OFF(Link.receiveTimeoutInMs),       OPT_INT, 0,
   	"Session timeout in seconds" },
   { AVC("pubUser"),   OFF(Link.pubUser),       OPT_STR, 0,
         "Publisher username" },
@@ -951,13 +950,13 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
   {
     struct timeval tv;
 
-    tv.tv_sec = r->Link.timeout / 1000;
-    tv.tv_usec = (r->Link.timeout % 1000) * 1000;
+    tv.tv_sec = r->Link.receiveTimeoutInMs / 1000;
+    tv.tv_usec = (r->Link.receiveTimeoutInMs % 1000) * 1000;
     if (setsockopt
         (r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)))
       {
-        RTMP_Log(RTMP_LOGERROR, "%s, Setting socket timeout to %ds failed!",
-	    __FUNCTION__, r->Link.timeout);
+        RTMP_Log(RTMP_LOGERROR, "%s, Setting socket timeout to %dms failed!",
+	    __FUNCTION__, r->Link.receiveTimeoutInMs);
       }
   }
 

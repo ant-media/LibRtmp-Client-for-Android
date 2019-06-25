@@ -176,8 +176,8 @@ extern "C"
     int swfAge;
 
     int protocol;
-    int timeout;                /* connection timeout in milliseconds */
-    int sendTimeoutInMs;        /* socket send timeout in milliseconds */
+    int receiveTimeoutInMs;
+    int sendTimeoutInMs;
 
 #define RTMP_PUB_NAME   0x0001  /* send login to server */
 #define RTMP_PUB_RESP   0x0002  /* send salted password hash */

@@ -61,7 +61,7 @@ public class RtmpClient {
      * Parameter expects a non-zero positive integer and will reset timeout to the default value
      * (10000 ms) if zero or a negative integer is passed.
      *  */
-    public void setSendTimeoutInMs(int sendTimeoutInMs) {
+    public void setSendTimeout(int sendTimeoutInMs) {
         if (sendTimeoutInMs > 0) {
             this.sendTimeoutInMs = sendTimeoutInMs;
         } else {
@@ -76,7 +76,7 @@ public class RtmpClient {
      * Parameter expects a non-zero positive integer and will reset timeout to the default value
      * (10000 ms) if zero or a negative integer is passed.
      *  */
-    public void setReceiveTimeoutInMs(int receiveTimeoutInMs) {
+    public void setReceiveTimeout(int receiveTimeoutInMs) {
         if (receiveTimeoutInMs > 0) {
             this.receiveTimeoutInMs = receiveTimeoutInMs;
         } else {
