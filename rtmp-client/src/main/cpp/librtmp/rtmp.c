@@ -4979,6 +4979,7 @@ fail:
   switch (readStatus) {
   case RTMP_READ_ERROR:  /* corrupted stream, resume failed */
     SetSockError(EINVAL);
+    return readStatus;
   case RTMP_READ_EOF:
   case RTMP_READ_COMPLETE:
     return readStatus;
