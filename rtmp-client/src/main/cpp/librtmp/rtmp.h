@@ -176,7 +176,8 @@ extern "C"
     int swfAge;
 
     int protocol;
-    int timeout;		/* connection timeout in seconds */
+    int receiveTimeoutInMs;
+    int sendTimeoutInMs;
 
 #define RTMP_PUB_NAME   0x0001  /* send login to server */
 #define RTMP_PUB_RESP   0x0002  /* send salted password hash */
@@ -311,7 +312,7 @@ extern "C"
 			AVal *subscribepath,
 			AVal *usherToken,
 			int dStart,
-			int dStop, int bLiveStream, long int timeout);
+			int dStop, int bLiveStream, long int timeoutInMs);
 
   int RTMP_Connect(RTMP *r, RTMPPacket *cp);
   struct sockaddr;
