@@ -79,10 +79,12 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
         throwIOException(env, "First call open function");
+        return 0;
     }
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
         throwIOException(env, "Connection to server is lost");
+        return 0;
     }
 
     char* data = malloc(size);
@@ -93,8 +95,19 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
         (*env)->SetByteArrayRegion(env, data_, offset, readCount, data);  // copy
     }
     free(data);
-    if (readCount == 0) {
-        return -1;
+    if (readCount <= 0) {
+        switch (readCount) {
+            /* For return values READ_EOF and READ_COMPLETE, return -1 to indicate stream is
+             * complete. */
+            case RTMP_READ_EOF:
+            case RTMP_READ_COMPLETE:
+                return -1;
+
+            case RTMP_READ_IGNORE:
+            case RTMP_READ_ERROR:
+            default:
+                return 0;
+        }
     }
     return readCount;
 }
@@ -111,11 +124,13 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject th
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
         throwIOException(env, "First call open function");
+        return 0;
     }
 
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
         throwIOException(env, "Connection to server is lost");
+        return 0;
     }
 
     jbyte* buf = malloc(size);
@@ -148,6 +163,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject th
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
         throwIOException(env, "First call open function");
+        return false;
     }
 
     int paused = RTMP_Pause(rtmp, pause);
