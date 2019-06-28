@@ -102,6 +102,40 @@ extern "C"
 #define RTMP_PACKET_SIZE_SMALL    2
 #define RTMP_PACKET_SIZE_MINIMUM  3
 
+  typedef enum RTMPErrors_ {
+    RTMP_SUCCESS = 1,
+    RTMP_ERROR_NONE = 0,
+    RTMP_READ_DONE = -1,
+    OPEN_ALLOC = -2,
+    OPEN_SETUP_URL = -3,
+    OPEN_CONNECT = -4,
+    OPEN_CONNECT_STREAM = -5,
+    UNKNOWN_RTMP_OPTION = -6,
+    UNKNOWN_RTMP_AMF_TYPE = -7,
+    DNS_NOT_REACHABLE = -8,
+    SOCKET_CONNECT_FAIL = -9,
+    SOCKS_NEGOTIATION_FAIL = -10,
+    SOCKET_CREATE_FAIL = -11,
+    NO_SSL_TLS_SUPP = -12,
+    HANDSHAKE_CONNECT_FAIL = -13,
+    HANDSHAKE_FAIL = -14,
+    RTMP_CONNECT_FAIL = -15,
+    CONNECTION_LOST = -16,
+    RTMP_KEYFRAME_TS_MISMATCH = -17,
+    RTMP_READ_CORRUPT_STREAM = -18,
+    RTMP_MEM_ALLOC_FAIL = -19,
+    RTMP_STREAM_BAD_DATASIZE = -20,
+    RTMP_PACKET_TOO_SMALL = -21,
+    RTMP_SEND_PACKET_FAILED = -22,
+    RTMP_PAUSE_FAIL = -23,
+    URL_MISSING_PROTOCOL = -24,
+    URL_MISSING_HOSTNAME = -25,
+    URL_INCORRECT_PORT = -26,
+    RTMP_ILLEGAL_STATE = -27,
+    RTMP_GENERIC_ERROR = -28,
+    RTMP_ERRORS,
+  } RTMPErrors;
+
   typedef struct RTMPChunk
   {
     int c_headerSize;
@@ -285,6 +319,8 @@ extern "C"
     RTMPPacket m_write;
     RTMPSockBuf m_sb;
     RTMP_LNK Link;
+
+    RTMPErrors m_error;
   } RTMP;
 
   int RTMP_ParseURL(const char *url, int *protocol, AVal *host,

@@ -53,7 +53,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_seek(JNIEnv* env, jobject thiz, jin
  * Method:    pause
  * Signature: (I)I
  */
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject thiz, jboolean pause,
                                                          jlong rtmpPointer);
 
@@ -99,6 +99,8 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_read(JNIEnv* env, jobject thiz, jbyt
 
 JNIEXPORT jboolean JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv* env, jobject thiz);
+
+jint throwIllegalStateException (JNIEnv* env, char* message);
 
 #ifdef __cplusplus
 }
