@@ -50,7 +50,7 @@ int RTMP_ParseURL(const char *url, int *protocol, AVal *host, unsigned int *port
 	p = strstr(url, "://");
 	if(!p) {
 		RTMP_Log(RTMP_LOGERROR, "RTMP URL: No :// in url!");
-		return URL_MISSING_PROTOCOL;
+		return RTMP_ERROR_URL_MISSING_PROTOCOL;
 	}
 	{
 	int len = (int)(p-url);
@@ -84,7 +84,7 @@ parsehost:
 	/* check for sudden death */
 	if(*p==0) {
 		RTMP_Log(RTMP_LOGWARNING, "No hostname in URL!");
-		return URL_MISSING_HOSTNAME;
+		return RTMP_ERROR_URL_MISSING_HOSTNAME;
 	}
 
 	end   = p + strlen(p);
@@ -126,7 +126,7 @@ parsehost:
 
 	if(!slash) {
 		RTMP_Log(RTMP_LOGWARNING, "No application or playpath in URL!");
-		return RTMP_ERROR_NONE;
+		return RTMP_SUCCESS;
 	}
 	p = slash+1;
 
@@ -183,7 +183,7 @@ parsehost:
 		RTMP_ParsePlaypath(&av, playpath);
 	}
 
-	return RTMP_ERROR_NONE;
+	return RTMP_SUCCESS;
 }
 
 /*

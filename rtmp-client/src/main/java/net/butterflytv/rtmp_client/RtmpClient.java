@@ -13,10 +13,19 @@ public class RtmpClient {
 
 
     private final static int OPEN_SUCCESS = 1;
+
+    /**
+     * RTMP read has received an EOF or READ_COMPLETE from the server
+     */
+    public final static int RTMP_READ_DONE = -1;
+
+    /**
+     * No error
+     */
+    public final static int RTMP_SUCCESS = 0;
+
     private final static int TIMEOUT_IN_MS = 10000;
     private long rtmpPointer = 0;
-
-    private int rtmpError = RtmpIOException.RTMP_ERROR_NONE;
 
     /** Socket send timeout value in milliseconds */
     private int sendTimeoutInMs = TIMEOUT_IN_MS;
@@ -26,250 +35,137 @@ public class RtmpClient {
     public static class RtmpIOException extends IOException {
 
         /**
-         * No error
-         */
-        public final static int RTMP_ERROR_NONE = 0;
-
-        /**
-         * RTMP read has received an EOF or READ_COMPLETE from the server
-         */
-        public final static int RTMP_READ_DONE = -1;
-
-        /**
-         * it means there is a problem in memory allocation
+         * RTMP client could not allocate memory for rtmp context structure
          */
         public final static int OPEN_ALLOC = -2;
 
         /**
-         * it means there is a problem in setting url, check the rtmp url
+         * RTMP client could not open the stream on server
          */
-        public final static int OPEN_SETUP_URL = -3;
-
-        /**
-         *  it means there is a problem in connecting to the rtmp server,
-         *  check there is an active network connection,
-         *  check rtmp server is running,
-         */
-        public final static int OPEN_CONNECT = -4;
-
-        /**
-         *  it means there is a problem in connecting stream
-         */
-        public final static int OPEN_CONNECT_STREAM = -5;
+        public final static int OPEN_CONNECT_STREAM = -3;
 
         /**
          * Received an unknown option from the RTMP server
          */
-        public final static int UNKNOWN_RTMP_OPTION = -6;
+        public final static int UNKNOWN_RTMP_OPTION = -4;
 
         /**
          * RTMP server sent a packet with unknown AMF type
          */
-        public final static int UNKNOWN_RTMP_AMF_TYPE = -7;
+        public final static int UNKNOWN_RTMP_AMF_TYPE = -5;
 
         /**
          * DNS server is not reachable
          */
-        public final static int DNS_NOT_REACHABLE = -8;
+        public final static int DNS_NOT_REACHABLE = -6;
 
         /**
          * Could not establish a socket connection to the server
          */
-        public final static int SOCKET_CONNECT_FAIL = -9;
+        public final static int SOCKET_CONNECT_FAIL = -7;
 
         /**
          * SOCKS negotiation failed
          */
-        public final static int SOCKS_NEGOTIATION_FAIL = -10;
+        public final static int SOCKS_NEGOTIATION_FAIL = -8;
 
         /**
          * Could not create a socket to connect to RTMP server
          */
-        public final static int SOCKET_CREATE_FAIL = -11;
+        public final static int SOCKET_CREATE_FAIL = -9;
 
         /**
          * SSL connection requested but not supported by the client
          */
-        public final static int NO_SSL_TLS_SUPP = -12;
+        public final static int NO_SSL_TLS_SUPP = -10;
 
         /**
          * Could not connect to the server for handshake
          */
-        public final static int HANDSHAKE_CONNECT_FAIL = -13;
+        public final static int HANDSHAKE_CONNECT_FAIL = -11;
 
         /**
          * Handshake with the server failed
          */
-        public final static int HANDSHAKE_FAIL = -14;
+        public final static int HANDSHAKE_FAIL = -12;
 
         /**
          * RTMP server connection failed
          */
-        public final static int RTMP_CONNECT_FAIL = -15;
+        public final static int RTMP_CONNECT_FAIL = -13;
 
         /**
          * Connection to the server lost
          */
-        public final static int CONNECTION_LOST = -16;
+        public final static int CONNECTION_LOST = -14;
 
         /**
          * Received an unexpected timestamp from the server
          */
-        public final static int RTMP_KEYFRAME_TS_MISMATCH = -17;
+        public final static int RTMP_KEYFRAME_TS_MISMATCH = -15;
 
         /**
          * The RTMP stream received is corrupted
          */
-        public final static int RTMP_READ_CORRUPT_STREAM = -18;
+        public final static int RTMP_READ_CORRUPT_STREAM = -16;
 
         /**
          * Memory allocation failed
          */
-        public final static int RTMP_MEM_ALLOC_FAIL = -19;
+        public final static int RTMP_MEM_ALLOC_FAIL = -17;
 
         /**
          * Stream indicated a bad datasize, could be corrupted
          */
-        public final static int RTMP_STREAM_BAD_DATASIZE = -20;
+        public final static int RTMP_STREAM_BAD_DATASIZE = -18;
 
         /**
          * RTMP packet received is too small
          */
-        public final static int RTMP_PACKET_TOO_SMALL = -21;
+        public final static int RTMP_PACKET_TOO_SMALL = -19;
 
         /**
          * Could not send packet to RTMP server
          */
-        public final static int RTMP_SEND_PACKET_FAILED = -22;
+        public final static int RTMP_SEND_PACKET_FAILED = -20;
 
         /**
          * Sending pause to the server failed
          */
-        public final static int RTMP_PAUSE_FAIL = -23;
+        public final static int RTMP_PAUSE_FAIL = -21;
 
         /**
          * Missing a :// in the URL
          */
-        public final static int URL_MISSING_PROTOCOL = -24;
+        public final static int URL_MISSING_PROTOCOL = -22;
 
         /**
          * Hostname is missing in the URL
          */
-        public final static int URL_MISSING_HOSTNAME = -25;
+        public final static int URL_MISSING_HOSTNAME = -23;
 
         /**
-         * The port number indicated in the URL is wrong.
+         * The port number indicated in the URL is wrong
          */
-        public final static int URL_INCORRECT_PORT = -26;
+        public final static int URL_INCORRECT_PORT = -24;
 
         /**
-         * The RTMP client is in an illegal state
+         * Error code used by JNI to return after throwing an exception
          */
-        public final static int RTMP_ILLEGAL_STATE = -27;
+        public final static int RTMP_IGNORED = -25;
 
         /**
          * RTMP client has encountered an unexpected error
          */
-        public final static int RTMP_GENERIC_ERROR = -28;
+        public final static int RTMP_GENERIC_ERROR = -26;
 
         public final int errorCode;
 
-        public RtmpIOException(String message, int errorCode) {
-            super(message);
+        public RtmpIOException(int errorCode) {
+            super("RTMP error: " + errorCode);
             this.errorCode = errorCode;
         }
 
-    }
-
-    private RtmpIOException createRtmpIOException(int errorCode) {
-        String message;
-        switch (errorCode) {
-            case RtmpIOException.OPEN_ALLOC:
-                message = "Could not allocate memory to RTMP structure";
-                break;
-            case RtmpIOException.OPEN_SETUP_URL:
-                message = "Could not open URL";
-                break;
-            case RtmpIOException.OPEN_CONNECT:
-                message = "Could not connect to RTMP server";
-                break;
-            case RtmpIOException.OPEN_CONNECT_STREAM:
-                message = "Could not open the stream";
-                break;
-            case RtmpIOException.UNKNOWN_RTMP_OPTION:
-                message = "Unknown RTMP option received";
-                break;
-            case RtmpIOException.UNKNOWN_RTMP_AMF_TYPE:
-                message = "Unknown RTMP AMF type received";
-                break;
-            case RtmpIOException.DNS_NOT_REACHABLE:
-                message = "DNS Service not reachable";
-                break;
-            case RtmpIOException.SOCKET_CONNECT_FAIL:
-                message = "Could not connect to RTMP server";
-                break;
-            case RtmpIOException.SOCKS_NEGOTIATION_FAIL:
-                message = "SOCKS negotiation failed";
-                break;
-            case RtmpIOException.SOCKET_CREATE_FAIL:
-                message = "Socket creation failed";
-                break;
-            case RtmpIOException.NO_SSL_TLS_SUPP:
-                message = "RTMP client doesn't support SSL";
-                break;
-            case RtmpIOException.HANDSHAKE_CONNECT_FAIL:
-                message = "Could not connect for handshake";
-                break;
-            case RtmpIOException.HANDSHAKE_FAIL:
-                message = "Handshake with server failed";
-                break;
-            case RtmpIOException.RTMP_CONNECT_FAIL:
-                message = "RTMP connect failed";
-                break;
-            case RtmpIOException.CONNECTION_LOST:
-                message = "Connection to server lost";
-                break;
-            case RtmpIOException.RTMP_KEYFRAME_TS_MISMATCH:
-                message = "RTMP keyframe timestamp mismatch";
-                break;
-            case RtmpIOException.RTMP_READ_CORRUPT_STREAM:
-                message = "RTMP stream corrupt";
-                break;
-            case RtmpIOException.RTMP_MEM_ALLOC_FAIL:
-                message = "Could not allocate memory";
-                break;
-            case RtmpIOException.RTMP_STREAM_BAD_DATASIZE:
-                message = "Received bad data size";
-                break;
-            case RtmpIOException.RTMP_PACKET_TOO_SMALL:
-                message = "RTMP packet is too small";
-                break;
-            case RtmpIOException.RTMP_SEND_PACKET_FAILED:
-                message = "Could not send packet to RTMP server";
-                break;
-            case RtmpIOException.RTMP_PAUSE_FAIL:
-                message = "Could not pause stream";
-                break;
-            case RtmpIOException.URL_MISSING_PROTOCOL:
-                message = "URL is missing protocol (://)";
-                break;
-            case RtmpIOException.URL_MISSING_HOSTNAME:
-                message = "URL is missing hostname";
-                break;
-            case RtmpIOException.URL_INCORRECT_PORT:
-                message = "URL port is incorrect";
-                break;
-            case RtmpIOException.RTMP_ILLEGAL_STATE:
-                message = "Client may not have been initialised with a call to open()";
-                break;
-            case RtmpIOException.RTMP_GENERIC_ERROR:
-                message = "Unexpected error in RTMP client";
-                break;
-            default:
-                message = "Unknown error!";
-                break;
-        }
-        return new RtmpIOException("Error " + errorCode + ": " + message, errorCode);
     }
 
     /**
@@ -302,16 +198,25 @@ public class RtmpClient {
         }
     }
 
+    /**
+     * opens the rtmp url
+     * @param url
+     * url of the stream
+     * @param isPublishMode
+     * if this is an publication it is true,
+     * if connection is for getting stream it is false
+     * @throws RtmpIOException if open fails
+     */
     public void open(String url, boolean isPublishMode) throws RtmpIOException {
         rtmpPointer = nativeAlloc();
         if (rtmpPointer == 0) {
-            throw this.createRtmpIOException(RtmpIOException.OPEN_ALLOC);
+            throw new RtmpIOException(RtmpIOException.OPEN_ALLOC);
         }
         int result = nativeOpen(url, isPublishMode, rtmpPointer, sendTimeoutInMs,
             receiveTimeoutInMs);
-        if (result != OPEN_SUCCESS) {
+        if (result != RTMP_SUCCESS) {
             rtmpPointer = 0;
-            throw this.createRtmpIOException(result);
+            throw new RtmpIOException(result);
         }
     }
 
@@ -341,21 +246,22 @@ public class RtmpClient {
      * @param offset
      * offset to read data
      * @param size
-     * size of the data to be reat
+     * size of the data to be read
      * @return
      * number of bytes to be read
      *
-     * if it returns -1, it means stream is complete
-     *  and close function can be called.
+     * if it returns {@link #RTMP_READ_DONE}, it means stream is complete
+     * and close function can be called.
      *
      *
-     *  @throws IOException if connection is not opened or connection to server is lost
-     *
+     * @throws RtmpIOException if connection to server is lost
+     * @throws IllegalStateException if call to {@link #open(String, boolean)} was unsuccessful or
+     * missing
      */
-    public int read(byte[] data, int offset, int size) throws IOException, IllegalStateException {
+    public int read(byte[] data, int offset, int size) throws RtmpIOException, IllegalStateException {
         int ret = nativeRead(data, offset, size, rtmpPointer);
-        if (ret < RtmpIOException.RTMP_ERROR_NONE && ret != RtmpIOException.RTMP_READ_DONE) {
-            throw this.createRtmpIOException(ret);
+        if (ret < RTMP_SUCCESS && ret != RTMP_READ_DONE) {
+            throw new RtmpIOException(ret);
         }
         return ret;
     }
@@ -363,26 +269,35 @@ public class RtmpClient {
     private native int nativeRead(byte[] data, int offset, int size, long rtmpPointer) throws IllegalStateException;
 
     /**
-     *
+     * Sends data to server
      * @param data
+     * The data to write to server
      * @return number of bytes written
-     * @throws IOException if connection is not opened or connection to server is lost
+     * @throws RtmpIOException if connection to server is lost
+     * @throws IllegalStateException if call to {@link #open(String, boolean)} was unsuccessful or
+     * missing
      */
-    public int write(byte[] data) throws IOException, IllegalStateException  {
+    public int write(byte[] data) throws RtmpIOException, IllegalStateException  {
         return write(data, 0, data.length);
     }
 
     /**
-     *
+     * Sends data to server
      * @param data
+     * data to write to server
+     * @param offset
+     * The offset from where data will be accessed to write to server
+     * @param size
+     * The number of bytes to write to server
      * @return number of bytes written
-     * @throws IOException if connection is not opened or connection to server is lost
+     * @throws RtmpIOException if connection to server is lost
+     * @throws IllegalStateException if call to {@link #open(String, boolean)} was unsuccessful or
+     * missing
      */
-    public int write(byte[] data, int offset, int size) throws IOException, IllegalStateException {
-        rtmpError = RtmpIOException.RTMP_ERROR_NONE;
+    public int write(byte[] data, int offset, int size) throws RtmpIOException, IllegalStateException {
         int ret = nativeWrite(data, offset, size, rtmpPointer);
-        if (ret < RtmpIOException.RTMP_ERROR_NONE) {
-            throw this.createRtmpIOException(ret);
+        if (ret < RTMP_SUCCESS) {
+            throw new RtmpIOException(ret);
         }
         return ret;
     }
@@ -396,12 +311,15 @@ public class RtmpClient {
      *
      * If pause is false, it unpauses the stream and it is ready to to play again
      *
-     * @return true if it is successfull else returns false
+     * @return true if it is successful else returns false
+     * @throws RtmpIOException if connection is lost
+     * @throws IllegalStateException if call to {@link #open(String, boolean)} was unsuccessful or
+     * missing
      */
     public boolean pause(boolean pause) throws RtmpIOException, IllegalStateException {
         int ret = nativePause(pause, rtmpPointer);
-        if (ret < RtmpIOException.RTMP_ERROR_NONE) {
-            throw this.createRtmpIOException(ret);
+        if (ret != RTMP_SUCCESS) {
+            throw new RtmpIOException(ret);
         }
         return true;
     }
@@ -422,7 +340,7 @@ public class RtmpClient {
 
     /**
      *
-     * closes the connection. Dont forget to call
+     * closes the connection. Don't forget to call
      */
     public void close() {
         nativeClose(rtmpPointer);

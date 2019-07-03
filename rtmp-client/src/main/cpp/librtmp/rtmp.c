@@ -735,7 +735,7 @@ int RTMP_SetOpt(RTMP *r, const AVal *opt, AVal *arg)
       break;
     case OPT_CONN:
       if (parseAMF(&r->Link.extras, arg, &r->Link.edepth)) {
-        r->m_error = UNKNOWN_RTMP_AMF_TYPE;
+        r->m_error = RTMP_ERROR_UNKNOWN_RTMP_AMF_TYPE;
         return FALSE;
       }
       break;
@@ -745,7 +745,7 @@ int RTMP_SetOpt(RTMP *r, const AVal *opt, AVal *arg)
   if (!options[i].name.av_len) {
     RTMP_Log(RTMP_LOGERROR, "Unknown option %s", opt->av_val);
     RTMP_OptUsage();
-    r->m_error = UNKNOWN_RTMP_OPTION;
+    r->m_error = RTMP_ERROR_UNKNOWN_RTMP_OPTION;
     return FALSE;
   }
 
@@ -765,7 +765,7 @@ int RTMP_SetupURL(RTMP *r, char *url)
   len = strlen(url);
   ret = RTMP_ParseURL(url, &r->Link.protocol, &r->Link.hostname,
   	&port, &r->Link.playpath0, &r->Link.app);
-  if (ret != RTMP_ERROR_NONE)
+  if (ret != RTMP_SUCCESS)
     {
       r->m_error = ret;
       return FALSE;
@@ -801,7 +801,7 @@ int RTMP_SetupURL(RTMP *r, char *url)
 	unsigned int c;
 	if (port < 3)
         {
-          r->m_error = URL_INCORRECT_PORT;
+          r->m_error = RTMP_ERROR_URL_INCORRECT_PORT;
           return FALSE;
         }
 	sscanf(p1+1, "%02x", &c);
@@ -874,7 +874,7 @@ static int
 add_addr_info(struct sockaddr_in *service, AVal *host, int port)
 {
   char *hostname;
-  int ret = RTMP_ERROR_NONE;
+  int ret = RTMP_SUCCESS;
   if (host->av_val[host->av_len])
     {
       hostname = malloc(host->av_len+1);
@@ -893,7 +893,7 @@ add_addr_info(struct sockaddr_in *service, AVal *host, int port)
       if (host == NULL || host->h_addr == NULL)
 	{
 	  RTMP_Log(RTMP_LOGERROR, "Problem accessing the DNS. (addr: %s)", hostname);
-	  ret = DNS_NOT_REACHABLE;
+	  ret = RTMP_ERROR_DNS_NOT_REACHABLE;
 	  goto finish;
 	}
       service->sin_addr = *(struct in_addr *)host->h_addr;
@@ -934,7 +934,7 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
 	  RTMP_Log(RTMP_LOGERROR, "%s, failed to connect socket. %d (%s)",
 	      __FUNCTION__, err, strerror(err));
 	  RTMP_Close(r);
-	  r->m_error = SOCKET_CONNECT_FAIL;
+	  r->m_error = RTMP_ERROR_SOCKET_CONNECT_FAIL;
 	  return FALSE;
 	}
 
@@ -945,7 +945,7 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
 	    {
 	      RTMP_Log(RTMP_LOGERROR, "%s, SOCKS negotiation failed.", __FUNCTION__);
 	      RTMP_Close(r);
-              r->m_error = SOCKS_NEGOTIATION_FAIL;
+              r->m_error = RTMP_ERROR_SOCKS_NEGOTIATION_FAIL;
 	      return FALSE;
 	    }
 	}
@@ -954,7 +954,7 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
     {
       RTMP_Log(RTMP_LOGERROR, "%s, failed to create socket. Error: %d", __FUNCTION__,
 	  GetSockError());
-      r->m_error = SOCKET_CREATE_FAIL;
+      r->m_error = RTMP_ERROR_SOCKET_CREATE_FAIL;
       return FALSE;
     }
 
@@ -1011,7 +1011,7 @@ RTMP_Connect1(RTMP *r, RTMPPacket *cp)
 #else
       RTMP_Log(RTMP_LOGERROR, "%s, no SSL/TLS support", __FUNCTION__);
       RTMP_Close(r);
-      r->m_error = NO_SSL_TLS_SUPP;
+      r->m_error = RTMP_ERROR_NO_SSL_TLS_SUPP;
       return FALSE;
 
 #endif
@@ -1027,7 +1027,7 @@ RTMP_Connect1(RTMP *r, RTMPPacket *cp)
 	  r->m_msgCounter = 0;
 	  RTMP_Log(RTMP_LOGDEBUG, "%s, Could not connect for handshake", __FUNCTION__);
 	  RTMP_Close(r);
-	  r->m_error = HANDSHAKE_CONNECT_FAIL;
+	  r->m_error = RTMP_ERROR_HANDSHAKE_CONNECT_FAIL;
 	  return FALSE;
 	}
       r->m_msgCounter = 0;
@@ -1037,7 +1037,7 @@ RTMP_Connect1(RTMP *r, RTMPPacket *cp)
     {
       RTMP_Log(RTMP_LOGERROR, "%s, handshake failed.", __FUNCTION__);
       RTMP_Close(r);
-      r->m_error = HANDSHAKE_FAIL;
+      r->m_error = RTMP_ERROR_HANDSHAKE_FAIL;
       return FALSE;
     }
   RTMP_Log(RTMP_LOGDEBUG, "%s, handshaked", __FUNCTION__);
@@ -1046,7 +1046,7 @@ RTMP_Connect1(RTMP *r, RTMPPacket *cp)
     {
       RTMP_Log(RTMP_LOGERROR, "%s, RTMP connect failed.", __FUNCTION__);
       RTMP_Close(r);
-      r->m_error = RTMP_CONNECT_FAIL;
+      r->m_error = RTMP_ERROR_CONNECT_FAIL;
       return FALSE;
     }
   return TRUE;
@@ -1056,7 +1056,7 @@ int
 RTMP_Connect(RTMP *r, RTMPPacket *cp)
 {
   struct sockaddr_in service;
-  int ret = RTMP_ERROR_NONE;
+  int ret = RTMP_SUCCESS;
   if (!r->Link.hostname.av_len)
     return FALSE;
 
@@ -1067,7 +1067,7 @@ RTMP_Connect(RTMP *r, RTMPPacket *cp)
     {
       /* Connect via SOCKS */
       ret = add_addr_info(&service, &r->Link.sockshost, r->Link.socksport);
-      if (ret != RTMP_ERROR_NONE)
+      if (ret != RTMP_SUCCESS)
         {
           r->m_error = ret;
           return FALSE;
@@ -1077,7 +1077,7 @@ RTMP_Connect(RTMP *r, RTMPPacket *cp)
     {
       /* Connect directly */
       ret = add_addr_info(&service, &r->Link.hostname, r->Link.port);
-      if (ret != RTMP_ERROR_NONE)
+      if (ret != RTMP_SUCCESS)
        {
           r->m_error = ret;
           return FALSE;
@@ -3954,7 +3954,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
         free(r->m_vecChannelsOut);
         r->m_vecChannelsOut = NULL;
         r->m_channelsAllocatedOut = 0;
-        r->m_error = RTMP_MEM_ALLOC_FAIL;
+        r->m_error = RTMP_ERROR_MEM_ALLOC_FAIL;
         return FALSE;
       }
       r->m_vecChannelsOut = packets;
@@ -3981,7 +3981,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
     {
       RTMP_Log(RTMP_LOGERROR, "sanity failed!! trying to send header of type: 0x%02x.",
 	  (unsigned char)packet->m_headerType);
-      r->m_error = RTMP_GENERIC_ERROR;
+      r->m_error = RTMP_ERROR_GENERIC;
       return FALSE;
     }
 
@@ -4070,7 +4070,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
 	  tlen = chunks * (cSize + 1) + nSize + hSize;
 	  tbuf = malloc(tlen);
 	  if (!tbuf) {
-            r->m_error = RTMP_MEM_ALLOC_FAIL;
+            r->m_error = RTMP_ERROR_MEM_ALLOC_FAIL;
             return FALSE;
           }
 	  toff = tbuf;
@@ -4094,7 +4094,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
         {
 	  wrote = WriteN(r, header, nChunkSize + hSize);
 	  if (!wrote) {
-            r->m_error = RTMP_SEND_PACKET_FAILED;
+            r->m_error = RTMP_ERROR_SEND_PACKET_FAILED;
 	    return FALSE;
           }
 	}
@@ -4127,7 +4127,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
       free(tbuf);
       tbuf = NULL;
       if (!wrote) {
-        r->m_error = RTMP_SEND_PACKET_FAILED;
+        r->m_error = RTMP_ERROR_SEND_PACKET_FAILED;
         return FALSE;
       }
     }
@@ -4621,6 +4621,7 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 			       (r->m_read.metaHeader, packetBody,
 				r->m_read.nMetaHeaderSize) != 0))
 			    {
+                              r->m_error = RTMP_ERROR_READ_CORRUPT_STREAM;
 			      ret = RTMP_READ_ERROR;
 			    }
 			}
@@ -4703,7 +4704,8 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 				    {
 				      RTMP_Log(RTMP_LOGERROR,
 					  "FLV Stream: Keyframe doesn't match!");
-				      ret = RTMP_KEYFRAME_TS_MISMATCH;
+				      r->m_error = RTMP_ERROR_KEYFRAME_TS_MISMATCH;
+				      ret = RTMP_READ_ERROR;
 				      break;
 				    }
 				  r->m_read.flags |= RTMP_READ_GOTFLVK;
@@ -4715,7 +4717,8 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 				    {
 				      RTMP_Log(RTMP_LOGWARNING,
 					  "Non skipable packet since it doesn't end with chunk, stream corrupt!");
-				      ret = RTMP_READ_CORRUPT_STREAM;
+                                      r->m_error = RTMP_ERROR_READ_CORRUPT_STREAM;
+                                      ret = RTMP_READ_ERROR;
 				      break;
 				    }
 				  packetBody += (pos + 11 + dataSize + 4);
@@ -4781,7 +4784,10 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 		  "Stream does not start with requested frame, ignoring data... ");
 	      r->m_read.nIgnoredFrameCounter++;
 	      if (r->m_read.nIgnoredFrameCounter > MAX_IGNORED_FRAMES)
-		ret = RTMP_READ_ERROR;	/* fatal error, couldn't continue stream */
+                {
+                  r->m_error = RTMP_ERROR_READ_CORRUPT_STREAM;
+                  ret = RTMP_READ_ERROR;	/* fatal error, couldn't continue stream */
+                }
 	      else
 		ret = RTMP_READ_IGNORE;
 	      break;
@@ -4794,7 +4800,10 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 		  "Stream does not start with requested FLV frame, ignoring data... ");
 	      r->m_read.nIgnoredFlvFrameCounter++;
 	      if (r->m_read.nIgnoredFlvFrameCounter > MAX_IGNORED_FRAMES)
-		ret = RTMP_READ_ERROR;
+                {
+                  r->m_error = RTMP_ERROR_READ_CORRUPT_STREAM;
+                  ret = RTMP_READ_ERROR;
+                }
 	      else
 		ret = RTMP_READ_IGNORE;
 	      break;
@@ -4840,6 +4849,7 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 	  if (r->m_read.buf == 0)
 	    {
 	      RTMP_Log(RTMP_LOGERROR, "Couldn't allocate memory!");
+	      r->m_error = RTMP_ERROR_MEM_ALLOC_FAIL;
 	      ret = RTMP_READ_ERROR;		/* fatal error */
 	      break;
 	    }
@@ -4933,7 +4943,8 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 		      RTMP_Log(RTMP_LOGERROR,
 			  "Wrong data size (%u), stream corrupted, aborting!",
 			  dataSize);
-		      ret = RTMP_STREAM_BAD_DATASIZE;
+		      r->m_error = RTMP_ERROR_STREAM_BAD_DATASIZE;
+		      ret = RTMP_READ_ERROR;
 		      break;
 		    }
 		  RTMP_Log(RTMP_LOGWARNING, "No tagSize found, appending!");
@@ -5025,7 +5036,7 @@ fail:
   switch (readStatus) {
   case RTMP_READ_ERROR:  /* corrupted stream, resume failed */
     SetSockError(EINVAL);
-    return readStatus;
+    return r->m_error;
   case RTMP_READ_EOF:
   case RTMP_READ_COMPLETE:
     return readStatus;
@@ -5138,7 +5149,7 @@ RTMP_Write(RTMP *r, const char *buf, int size)
   char *pend, *enc;
   int s2 = size, ret, num;
 
-  r->m_error = RTMP_ERROR_NONE;
+  r->m_error = RTMP_SUCCESS;
   pkt->m_nChannel = 0x04;	/* source channel */
   pkt->m_nInfoField2 = r->m_stream_id;
 
@@ -5148,7 +5159,7 @@ RTMP_Write(RTMP *r, const char *buf, int size)
 	{
 	  if (size < 11) {
 	    /* FLV pkt too small */
-	    r->m_error = RTMP_PACKET_TOO_SMALL;
+	    r->m_error = RTMP_ERROR_PACKET_TOO_SMALL;
 	    return FALSE;
 	  }
 
@@ -5183,6 +5194,7 @@ RTMP_Write(RTMP *r, const char *buf, int size)
 	  if (!RTMPPacket_Alloc(pkt, pkt->m_nBodySize))
 	    {
 	      RTMP_Log(RTMP_LOGDEBUG, "%s, failed to allocate packet", __FUNCTION__);
+	      r->m_error = RTMP_ERROR_MEM_ALLOC_FAIL;
 	      return FALSE;
 	    }
 	  enc = pkt->m_body;
@@ -5210,7 +5222,7 @@ RTMP_Write(RTMP *r, const char *buf, int size)
 	  RTMPPacket_Free(pkt);
 	  pkt->m_nBytesRead = 0;
 	  if (!ret) {
-	    return r->m_error;
+	    return FALSE;
 	  }
 	  buf += 4;
 	  s2 -= 4;

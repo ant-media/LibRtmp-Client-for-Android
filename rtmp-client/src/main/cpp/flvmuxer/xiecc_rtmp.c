@@ -147,7 +147,7 @@ static uint8_t gen_audio_tag_header()
 int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_height) {
     rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
-        return OPEN_ALLOC;
+        return RTMP_ERROR_OPEN_ALLOC;
     }
 
     RTMP_Init(rtmp);
@@ -169,7 +169,7 @@ int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_he
     ret = RTMP_ConnectStream(rtmp, 0);
 
     if (!ret) {
-        return OPEN_CONNECT_STREAM;
+        return RTMP_ERROR_OPEN_CONNECT_STREAM;
     }
 
     video_config_ok = false;
@@ -213,7 +213,7 @@ int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_he
 
         return RTMP_Write(rtmp, send_buffer, output_len);
     }
-    return CONNECTION_LOST;
+    return RTMP_ERROR_CONNECTION_LOST;
 }
 
 int rtmp_close() {
