@@ -1173,7 +1173,7 @@ RTMP_ReconnectStream(RTMP *r, int seekTime)
 RTMPResult
 RTMP_ToggleStream(RTMP *r)
 {
-  int res;
+  RTMPResult res;
 
   if (!r->m_pausing)
     {
@@ -1802,7 +1802,7 @@ SendFCSubscribe(RTMP *r, AVal *subscribepath)
   enc = AMF_EncodeString(enc, pend, subscribepath);
 
   if (!enc)
-    return RTMP_ERROR_GENERIC;
+    return RTMP_ERROR_AMF_ENCODE_FAIL;
 
   packet.m_nBodySize = enc - packet.m_body;
 
@@ -3978,7 +3978,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
     {
       RTMP_Log(RTMP_LOGERROR, "sanity failed!! trying to send header of type: 0x%02x.",
 	  (unsigned char)packet->m_headerType);
-      return RTMP_ERROR_GENERIC;
+      return RTMP_ERROR_SANITY_FAIL;
     }
 
   nSize = packetSize[packet->m_headerType];
@@ -4089,7 +4089,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
         {
 	  wrote = WriteN(r, header, nChunkSize + hSize);
 	  if (!wrote) {
-	    return RTMP_ERROR_SEND_PACKET_FAILED;
+	    return RTMP_ERROR_SEND_PACKET_FAIL;
           }
 	}
       nSize -= nChunkSize;
@@ -4121,7 +4121,7 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue)
       free(tbuf);
       tbuf = NULL;
       if (!wrote) {
-        return RTMP_ERROR_SEND_PACKET_FAILED;
+        return RTMP_ERROR_SEND_PACKET_FAIL;
       }
     }
 
@@ -4532,7 +4532,7 @@ static int
 Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 {
   uint32_t prevTagSize = 0;
-  int rtnGetNextMediaPacket = 0, ret = RTMP_READ_EOF;
+  int rtnGetNextMediaPacket = 0, ret = RTMP_ERROR_CONNECTION_LOST;
   RTMPPacket packet = { 0 };
   int recopy = FALSE;
   unsigned int size;
@@ -4546,8 +4546,8 @@ Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
       char *packetBody = packet.m_body;
       unsigned int nPacketLen = packet.m_nBodySize;
 
-      /* Return RTMP_READ_COMPLETE if this was completed nicely with
-       * invoke message Play.Stop or Play.Complete
+      /* Set status as RTMP_READ_COMPLETE if this was completed nicely with
+       * invoke message Play.Stop or Play.Complete and return RTMP_READ_DONE.
        */
       if (rtnGetNextMediaPacket == 2)
 	{
@@ -5034,7 +5034,6 @@ int
 RTMP_Read(RTMP *r, char *buf, int size)
 {
   int nRead = 0, total = 0;
-  int8_t readStatus;
 
   /* first time thru */
   if (!(r->m_read.flags & RTMP_READ_HEADER))
@@ -5130,8 +5129,8 @@ RTMP_Read(RTMP *r, char *buf, int size)
       size -= nRead;
       break;
     }
-  if (nRead < 0)
-    r->m_read.status = nRead;
+  if (nRead < RTMP_SUCCESS)
+    r->m_read.status = RTMP_READ_ERROR;
 
   if (size < 0)
     total += size;

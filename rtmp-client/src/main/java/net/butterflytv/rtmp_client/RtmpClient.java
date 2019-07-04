@@ -125,12 +125,12 @@ public class RtmpClient {
         /**
          * Could not send packet to RTMP server
          */
-        public final static int RTMP_SEND_PACKET_FAILED = -20;
+        public final static int RTMP_SEND_PACKET_FAIL = -20;
 
         /**
-         * Sending pause to the server failed
+         * AMF Encode failed while preparing a packet
          */
-        public final static int RTMP_PAUSE_FAIL = -21;
+        public final static int RTMP_AMF_ENCODE_FAIL = -21;
 
         /**
          * Missing a :// in the URL
@@ -156,6 +156,11 @@ public class RtmpClient {
          * RTMP client has encountered an unexpected error
          */
         public final static int RTMP_GENERIC_ERROR = -26;
+
+        /**
+         * A sanity check failed in the RTMP client
+         */
+        public final static int RTMP_SANITY_FAIL = -27;
 
         public final int errorCode;
 

@@ -123,14 +123,14 @@ extern "C"
     RTMP_ERROR_MEM_ALLOC_FAIL = -17,
     RTMP_ERROR_STREAM_BAD_DATASIZE = -18,
     RTMP_ERROR_PACKET_TOO_SMALL = -19,
-    RTMP_ERROR_SEND_PACKET_FAILED = -20,
-    RTMP_ERROR_PAUSE_FAIL = -21,
+    RTMP_ERROR_SEND_PACKET_FAIL = -20,
+    RTMP_ERROR_AMF_ENCODE_FAIL = -21,
     RTMP_ERROR_URL_MISSING_PROTOCOL = -22,
     RTMP_ERROR_URL_MISSING_HOSTNAME = -23,
     RTMP_ERROR_URL_INCORRECT_PORT = -24,
     RTMP_ERROR_IGNORED = -25,
     RTMP_ERROR_GENERIC = -26,
-    RTMP_RESULTS,
+    RTMP_ERROR_SANITY_FAIL = -27,
   } RTMPResult;
 
   typedef struct RTMPChunk
@@ -400,7 +400,18 @@ extern "C"
   RTMPResult RTMP_SendServerBW(RTMP *r);
   RTMPResult RTMP_SendClientBW(RTMP *r);
   void RTMP_DropRequest(RTMP *r, int i, int freeit);
+  /*
+   * RTMP_Read returns
+   * 1. the number of bytes read in case there was no error.
+   * 2. an error value from RTMPResult if there was an error.
+   * 3. RTMP_READ_DONE in case the stream has ended.
+   */
   int RTMP_Read(RTMP *r, char *buf, int size);
+  /*
+   * RTMP_Write returns
+   * 1. the number of bytes written in case there was no error.
+   * 2. an error value from RTMPResult if there was an error,
+   */
   int RTMP_Write(RTMP *r, const char *buf, int size);
 
 /* hashswf.c */

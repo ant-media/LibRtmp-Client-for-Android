@@ -40,7 +40,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
     RTMP_Init(rtmp);
     rtmp->Link.receiveTimeoutInMs = receiveTimeoutInMs;
     rtmp->Link.sendTimeoutInMs = sendTimeoutInMs;
-    int ret = RTMP_SetupURL(rtmp, url);
+    RTMPResult ret = RTMP_SetupURL(rtmp, url);
 
     if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
@@ -58,6 +58,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
     ret = RTMP_ConnectStream(rtmp, 0);
 
     if (ret != RTMP_SUCCESS) {
+        RTMP_Free(rtmp);
         return ret;
     }
     (*env)->ReleaseStringUTFChars(env, url_, url);
@@ -147,11 +148,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject th
         return RTMP_ERROR_IGNORED;
     }
 
-    int result = RTMP_Pause(rtmp, pause);
-    if (result == RTMP_ERROR_SEND_PACKET_FAILED) {
-        result = RTMP_ERROR_PAUSE_FAIL;
-    }
-    return result;
+    return RTMP_Pause(rtmp, pause);
 }
 
 /*
