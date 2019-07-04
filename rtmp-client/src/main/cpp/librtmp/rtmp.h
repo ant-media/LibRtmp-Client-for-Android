@@ -316,8 +316,6 @@ extern "C"
     RTMPPacket m_write;
     RTMPSockBuf m_sb;
     RTMP_LNK Link;
-
-    RTMPResult m_error;
   } RTMP;
 
   int RTMP_ParseURL(const char *url, int *protocol, AVal *host,
@@ -328,7 +326,7 @@ extern "C"
   void RTMP_UpdateBufferMS(RTMP *r);
 
   int RTMP_SetOpt(RTMP *r, const AVal *opt, AVal *arg);
-  int RTMP_SetupURL(RTMP *r, char *url);
+  RTMPResult RTMP_SetupURL(RTMP *r, char *url);
   void RTMP_SetupStream(RTMP *r, int protocol,
 			AVal *hostname,
 			unsigned int port,
@@ -347,15 +345,15 @@ extern "C"
 			int dStart,
 			int dStop, int bLiveStream, long int timeoutInMs);
 
-  int RTMP_Connect(RTMP *r, RTMPPacket *cp);
+  RTMPResult RTMP_Connect(RTMP *r, RTMPPacket *cp);
   struct sockaddr;
-  int RTMP_Connect0(RTMP *r, struct sockaddr *svc);
-  int RTMP_Connect1(RTMP *r, RTMPPacket *cp);
+  RTMPResult RTMP_Connect0(RTMP *r, struct sockaddr *svc);
+  RTMPResult RTMP_Connect1(RTMP *r, RTMPPacket *cp);
   int RTMP_Serve(RTMP *r);
   int RTMP_TLS_Accept(RTMP *r, void *ctx);
 
   int RTMP_ReadPacket(RTMP *r, RTMPPacket *packet);
-  int RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue);
+  RTMPResult RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue);
   int RTMP_SendChunk(RTMP *r, RTMPChunk *chunk);
   int RTMP_IsConnected(RTMP *r);
   int RTMP_Socket(RTMP *r);
@@ -363,8 +361,8 @@ extern "C"
   double RTMP_GetDuration(RTMP *r);
   int RTMP_ToggleStream(RTMP *r);
 
-  int RTMP_ConnectStream(RTMP *r, int seekTime);
-  int RTMP_ReconnectStream(RTMP *r, int seekTime);
+  RTMPResult RTMP_ConnectStream(RTMP *r, int seekTime);
+  RTMPResult RTMP_ReconnectStream(RTMP *r, int seekTime);
   void RTMP_DeleteStream(RTMP *r);
   int RTMP_GetNextMediaPacket(RTMP *r, RTMPPacket *packet);
   int RTMP_ClientPacket(RTMP *r, RTMPPacket *packet);
@@ -381,14 +379,14 @@ extern "C"
   int RTMP_LibVersion(void);
   void RTMP_UserInterrupt(void);	/* user typed Ctrl-C */
 
-  int RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject,
+  RTMPResult RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject,
 		     unsigned int nTime);
 
   /* caller probably doesn't know current timestamp, should
    * just use RTMP_Pause instead
    */
-  int RTMP_SendPause(RTMP *r, int DoPause, int dTime);
-  int RTMP_Pause(RTMP *r, int DoPause);
+  RTMPResult RTMP_SendPause(RTMP *r, int DoPause, int dTime);
+  RTMPResult RTMP_Pause(RTMP *r, int DoPause);
 
   int RTMP_FindFirstMatchingProperty(AMFObject *obj, const AVal *name,
 				      AMFObjectProperty * p);
@@ -397,10 +395,10 @@ extern "C"
   int RTMPSockBuf_Send(RTMPSockBuf *sb, const char *buf, int len);
   int RTMPSockBuf_Close(RTMPSockBuf *sb);
 
-  int RTMP_SendCreateStream(RTMP *r);
-  int RTMP_SendSeek(RTMP *r, int dTime);
-  int RTMP_SendServerBW(RTMP *r);
-  int RTMP_SendClientBW(RTMP *r);
+  RTMPResult RTMP_SendCreateStream(RTMP *r);
+  RTMPResult RTMP_SendSeek(RTMP *r, int dTime);
+  RTMPResult RTMP_SendServerBW(RTMP *r);
+  RTMPResult RTMP_SendClientBW(RTMP *r);
   void RTMP_DropRequest(RTMP *r, int i, int freeit);
   int RTMP_Read(RTMP *r, char *buf, int size);
   int RTMP_Write(RTMP *r, const char *buf, int size);

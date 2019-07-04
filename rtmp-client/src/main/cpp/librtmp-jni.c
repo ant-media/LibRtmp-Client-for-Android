@@ -37,29 +37,28 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
         return RTMP_ERROR_IGNORED;
     }
 
-    rtmp->m_error = RTMP_SUCCESS;
     RTMP_Init(rtmp);
     rtmp->Link.receiveTimeoutInMs = receiveTimeoutInMs;
     rtmp->Link.sendTimeoutInMs = sendTimeoutInMs;
     int ret = RTMP_SetupURL(rtmp, url);
 
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return rtmp->m_error;
+        return ret;
     }
     if (isPublishMode) {
         RTMP_EnableWrite(rtmp);
     }
 
     ret = RTMP_Connect(rtmp, NULL);
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return rtmp->m_error;
+        return ret;
     }
     ret = RTMP_ConnectStream(rtmp, 0);
 
-    if (!ret) {
-        return RTMP_ERROR_OPEN_CONNECT_STREAM;
+    if (ret != RTMP_SUCCESS) {
+        return ret;
     }
     (*env)->ReleaseStringUTFChars(env, url_, url);
     return RTMP_SUCCESS;
@@ -80,7 +79,6 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
         return RTMP_ERROR_IGNORED;
     }
 
-    rtmp->m_error = RTMP_SUCCESS;
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
         return RTMP_ERROR_CONNECTION_LOST;
@@ -94,20 +92,6 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
         (*env)->SetByteArrayRegion(env, data_, offset, readCount, data);  // copy
     }
     free(data);
-    if (readCount <= 0) {
-        switch (readCount) {
-            /* For return values READ_EOF and READ_COMPLETE, return -1 to indicate stream is
-             * complete. */
-            case RTMP_READ_EOF:
-            case RTMP_READ_COMPLETE:
-                return RTMP_READ_DONE;
-
-            case RTMP_READ_IGNORE:
-            case RTMP_READ_ERROR:
-            default:
-                return rtmp->m_error;
-        }
-    }
     return readCount;
 }
 
@@ -126,7 +110,6 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject th
         return RTMP_ERROR_IGNORED;
     }
 
-    rtmp->m_error = RTMP_SUCCESS;
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
         return RTMP_ERROR_CONNECTION_LOST;
@@ -136,11 +119,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject th
     (*env)->GetByteArrayRegion(env, data, offset, size, buf);
     int result = RTMP_Write(rtmp, buf, size);
     free(buf);
-    if (!result) {
-        return rtmp->m_error;
-    } else {
-        return result;
-    }
+    return result;
 }
 
 /*
@@ -168,15 +147,11 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject th
         return RTMP_ERROR_IGNORED;
     }
 
-    rtmp->m_error = RTMP_SUCCESS;
-    int paused = RTMP_Pause(rtmp, pause);
-    if (!paused) {
-        if (rtmp->m_error == RTMP_ERROR_SEND_PACKET_FAILED) {
-          rtmp->m_error = RTMP_ERROR_PAUSE_FAIL;
-        }
-        return rtmp->m_error;
+    int result = RTMP_Pause(rtmp, pause);
+    if (result == RTMP_ERROR_SEND_PACKET_FAILED) {
+        result = RTMP_ERROR_PAUSE_FAIL;
     }
-    return RTMP_SUCCESS;
+    return result;
 }
 
 /*

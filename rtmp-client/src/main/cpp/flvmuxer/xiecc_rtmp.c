@@ -153,18 +153,18 @@ int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_he
     RTMP_Init(rtmp);
     int ret = RTMP_SetupURL(rtmp, url);
 
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return rtmp->m_error;
+        return ret;
     }
 
     RTMP_EnableWrite(rtmp);
 
 
     ret = RTMP_Connect(rtmp, NULL);
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return rtmp->m_error;
+        return ret;
     }
     ret = RTMP_ConnectStream(rtmp, 0);
 
@@ -349,7 +349,7 @@ int rtmp_sender_write_audio_frame(uint8_t *data,
         val = RTMP_Write(rtmp, output, output_len);
         free(output);
     }
-    return (val > 0) ? 0: -1;
+    return (val > 0) ? RTMP_SUCCESS: RTMP_ERROR_GENERIC;
 }
 
 static uint32_t find_start_code(uint8_t *buf, uint32_t zeros_in_startcode)
@@ -665,5 +665,5 @@ int rtmp_sender_write_video_frame(uint8_t *data,
         nal = get_nal(&nal_len, &buf_offset, buf, total);
     }
 
-    return (val > 0) ? 0: -1;
+    return (val > 0) ? RTMP_SUCCESS: RTMP_ERROR_GENERIC;
 }

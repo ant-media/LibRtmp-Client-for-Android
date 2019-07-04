@@ -12,8 +12,6 @@ public class RtmpClient {
     }
 
 
-    private final static int OPEN_SUCCESS = 1;
-
     /**
      * RTMP read has received an EOF or READ_COMPLETE from the server
      */
@@ -22,7 +20,7 @@ public class RtmpClient {
     /**
      * No error
      */
-    public final static int RTMP_SUCCESS = 0;
+    private final static int RTMP_SUCCESS = 0;
 
     private final static int TIMEOUT_IN_MS = 10000;
     private long rtmpPointer = 0;
