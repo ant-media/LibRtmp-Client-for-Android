@@ -13,13 +13,9 @@
 
 //RTMP *rtmp = NULL;
 
-
 JNIEXPORT jlong JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc(JNIEnv* env, jobject thiz) {
     RTMP *rtmp = RTMP_Alloc();
-    if (rtmp == NULL) {
-        return -1;
-    }
     return (jlong)rtmp;
 }
 
@@ -37,34 +33,36 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
     RTMP *rtmp = (RTMP *) rtmpPointer;
    // rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
-        return -1;
+        throwIllegalStateException(env, "RTMP open called without allocating rtmp object");
+        return RTMP_ERROR_IGNORED;
     }
 
     RTMP_Init(rtmp);
     rtmp->Link.receiveTimeoutInMs = receiveTimeoutInMs;
     rtmp->Link.sendTimeoutInMs = sendTimeoutInMs;
-    int ret = RTMP_SetupURL(rtmp, url);
+    RTMPResult ret = RTMP_SetupURL(rtmp, url);
 
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return -2;
+        return ret;
     }
     if (isPublishMode) {
         RTMP_EnableWrite(rtmp);
     }
 
     ret = RTMP_Connect(rtmp, NULL);
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return -3;
+        return ret;
     }
     ret = RTMP_ConnectStream(rtmp, 0);
 
-    if (!ret) {
-        return -4;
+    if (ret != RTMP_SUCCESS) {
+        RTMP_Free(rtmp);
+        return ret;
     }
     (*env)->ReleaseStringUTFChars(env, url_, url);
-    return 1;
+    return RTMP_SUCCESS;
 }
 
 /*
@@ -78,13 +76,13 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
-        throwIOException(env, "First call open function");
-        return 0;
+        throwIllegalStateException(env, "RTMP open function has to be called before read");
+        return RTMP_ERROR_IGNORED;
     }
+
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
-        throwIOException(env, "Connection to server is lost");
-        return 0;
+        return RTMP_ERROR_CONNECTION_LOST;
     }
 
     char* data = malloc(size);
@@ -95,20 +93,6 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
         (*env)->SetByteArrayRegion(env, data_, offset, readCount, data);  // copy
     }
     free(data);
-    if (readCount <= 0) {
-        switch (readCount) {
-            /* For return values READ_EOF and READ_COMPLETE, return -1 to indicate stream is
-             * complete. */
-            case RTMP_READ_EOF:
-            case RTMP_READ_COMPLETE:
-                return -1;
-
-            case RTMP_READ_IGNORE:
-            case RTMP_READ_ERROR:
-            default:
-                return 0;
-        }
-    }
     return readCount;
 }
 
@@ -123,21 +107,19 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject th
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
-        throwIOException(env, "First call open function");
-        return 0;
+        throwIllegalStateException(env, "RTMP open function has to be called before write");
+        return RTMP_ERROR_IGNORED;
     }
 
     int connected = RTMP_IsConnected(rtmp);
     if (!connected) {
-        throwIOException(env, "Connection to server is lost");
-        return 0;
+        return RTMP_ERROR_CONNECTION_LOST;
     }
 
     jbyte* buf = malloc(size);
     (*env)->GetByteArrayRegion(env, data, offset, size, buf);
     int result = RTMP_Write(rtmp, buf, size);
     free(buf);
-
     return result;
 }
 
@@ -156,18 +138,17 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_seek(JNIEnv* env, jobject thiz, jin
  * Method:    pause
  * Signature: (I)I
  */
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject thiz, jboolean pause,
                                                          jlong rtmpPointer) {
 
     RTMP *rtmp = (RTMP *) rtmpPointer;
     if (rtmp == NULL) {
-        throwIOException(env, "First call open function");
-        return false;
+        throwIllegalStateException(env, "RTMP open function has to be called before pause");
+        return RTMP_ERROR_IGNORED;
     }
 
-    int paused = RTMP_Pause(rtmp, pause);
-    return paused ? true : false;
+    return RTMP_Pause(rtmp, pause);
 }
 
 /*
@@ -196,8 +177,8 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeIsConnected(JNIEnv* env, jobj
     return connected ? true : false;
 }
 
-jint throwIOException (JNIEnv* env, char* message)
+jint throwIllegalStateException (JNIEnv* env, char* message)
 {
-    jclass exception = (*env)->FindClass(env, "java/io/IOException");
+    jclass exception = (*env)->FindClass(env, "java/lang/IllegalStateException");
     return (*env)->ThrowNew(env, exception, message);
 }
