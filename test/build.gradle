@@ -3,12 +3,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion  21
-    buildToolsVersion  "25.0.3"
+    buildToolsVersion  "28.0.3"
 
     defaultConfig.with {
         applicationId  "net.butterflytv.rtmp_client.test"
-        minSdkVersion  21
-        targetSdkVersion  21
+        minSdkVersion  15
+        targetSdkVersion  15
         versionCode  1
         versionName  "1.0"
 
@@ -28,14 +28,14 @@ android.buildTypes {
 
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support:support-annotations:23.4.0'
-    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
-    compile project(':rtmp-client')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support:support-annotations:28.0.0'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    implementation project(':rtmp-client')
 }

@@ -3,7 +3,7 @@ apply plugin: "com.android.library"
 
 android {
     compileSdkVersion  21 // sdk level 21 lets ndk generate resources for archs such as arm64.
-    buildToolsVersion  "25.0.3"
+    buildToolsVersion  "28.0.3"
     defaultConfig {
         // applicationId "io.antmedia.rtmpclient"
         minSdkVersion 15
