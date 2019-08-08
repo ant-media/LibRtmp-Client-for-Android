@@ -24,7 +24,7 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_writeAudio(JNIEnv* env, jobject thiz
                                                        jint offset, jint length, jlong timestamp) {
     jbyte *data = (*env)->GetByteArrayElements(env, data_, NULL);
 
-    jint result = rtmp_sender_write_audio_frame(data[offset], length, timestamp, 0);
+    jint result = rtmp_sender_write_audio_frame(&data[offset], length, timestamp, 0);
 
     (*env)->ReleaseByteArrayElements(env, data_, data, JNI_ABORT);
     return result;
@@ -35,7 +35,7 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_writeVideo(JNIEnv* env, jobject thiz
                                                        jint offset, jint length, jlong timestamp) {
     jbyte *data = (*env)->GetByteArrayElements(env, data_, NULL);
 
-    jint result = rtmp_sender_write_video_frame(data[offset], length, timestamp, 0, 0);
+    jint result = rtmp_sender_write_video_frame(&data[offset], length, timestamp, 0, 0);
 
     (*env)->ReleaseByteArrayElements(env, data_, data, JNI_ABORT);
 
