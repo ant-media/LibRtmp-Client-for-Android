@@ -168,7 +168,7 @@ int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_he
     }
     ret = RTMP_ConnectStream(rtmp, 0);
 
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         return RTMP_ERROR_OPEN_CONNECT_STREAM;
     }
 
