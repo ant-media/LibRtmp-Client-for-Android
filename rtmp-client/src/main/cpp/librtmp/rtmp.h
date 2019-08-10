@@ -102,6 +102,37 @@ extern "C"
 #define RTMP_PACKET_SIZE_SMALL    2
 #define RTMP_PACKET_SIZE_MINIMUM  3
 
+  typedef enum RTMPResult_ {
+    RTMP_SUCCESS = 0,
+    RTMP_READ_DONE = -1,
+    RTMP_ERROR_OPEN_ALLOC = -2,
+    RTMP_ERROR_OPEN_CONNECT_STREAM = -3,
+    RTMP_ERROR_UNKNOWN_RTMP_OPTION = -4,
+    RTMP_ERROR_UNKNOWN_RTMP_AMF_TYPE = -5,
+    RTMP_ERROR_DNS_NOT_REACHABLE = -6,
+    RTMP_ERROR_SOCKET_CONNECT_FAIL = -7,
+    RTMP_ERROR_SOCKS_NEGOTIATION_FAIL = -8,
+    RTMP_ERROR_SOCKET_CREATE_FAIL = -9,
+    RTMP_ERROR_NO_SSL_TLS_SUPP = -10,
+    RTMP_ERROR_HANDSHAKE_CONNECT_FAIL = -11,
+    RTMP_ERROR_HANDSHAKE_FAIL = -12,
+    RTMP_ERROR_CONNECT_FAIL = -13,
+    RTMP_ERROR_CONNECTION_LOST = -14,
+    RTMP_ERROR_KEYFRAME_TS_MISMATCH = -15,
+    RTMP_ERROR_READ_CORRUPT_STREAM = -16,
+    RTMP_ERROR_MEM_ALLOC_FAIL = -17,
+    RTMP_ERROR_STREAM_BAD_DATASIZE = -18,
+    RTMP_ERROR_PACKET_TOO_SMALL = -19,
+    RTMP_ERROR_SEND_PACKET_FAIL = -20,
+    RTMP_ERROR_AMF_ENCODE_FAIL = -21,
+    RTMP_ERROR_URL_MISSING_PROTOCOL = -22,
+    RTMP_ERROR_URL_MISSING_HOSTNAME = -23,
+    RTMP_ERROR_URL_INCORRECT_PORT = -24,
+    RTMP_ERROR_IGNORED = -25,
+    RTMP_ERROR_GENERIC = -26,
+    RTMP_ERROR_SANITY_FAIL = -27,
+  } RTMPResult;
+
   typedef struct RTMPChunk
   {
     int c_headerSize;
@@ -176,7 +207,8 @@ extern "C"
     int swfAge;
 
     int protocol;
-    int timeout;		/* connection timeout in seconds */
+    int receiveTimeoutInMs;
+    int sendTimeoutInMs;
 
 #define RTMP_PUB_NAME   0x0001  /* send login to server */
 #define RTMP_PUB_RESP   0x0002  /* send salted password hash */
@@ -294,7 +326,7 @@ extern "C"
   void RTMP_UpdateBufferMS(RTMP *r);
 
   int RTMP_SetOpt(RTMP *r, const AVal *opt, AVal *arg);
-  int RTMP_SetupURL(RTMP *r, char *url);
+  RTMPResult RTMP_SetupURL(RTMP *r, char *url);
   void RTMP_SetupStream(RTMP *r, int protocol,
 			AVal *hostname,
 			unsigned int port,
@@ -311,17 +343,17 @@ extern "C"
 			AVal *subscribepath,
 			AVal *usherToken,
 			int dStart,
-			int dStop, int bLiveStream, long int timeout);
+			int dStop, int bLiveStream, long int timeoutInMs);
 
-  int RTMP_Connect(RTMP *r, RTMPPacket *cp);
+  RTMPResult RTMP_Connect(RTMP *r, RTMPPacket *cp);
   struct sockaddr;
-  int RTMP_Connect0(RTMP *r, struct sockaddr *svc);
-  int RTMP_Connect1(RTMP *r, RTMPPacket *cp);
+  RTMPResult RTMP_Connect0(RTMP *r, struct sockaddr *svc);
+  RTMPResult RTMP_Connect1(RTMP *r, RTMPPacket *cp);
   int RTMP_Serve(RTMP *r);
   int RTMP_TLS_Accept(RTMP *r, void *ctx);
 
   int RTMP_ReadPacket(RTMP *r, RTMPPacket *packet);
-  int RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue);
+  RTMPResult RTMP_SendPacket(RTMP *r, RTMPPacket *packet, int queue);
   int RTMP_SendChunk(RTMP *r, RTMPChunk *chunk);
   int RTMP_IsConnected(RTMP *r);
   int RTMP_Socket(RTMP *r);
@@ -329,8 +361,8 @@ extern "C"
   double RTMP_GetDuration(RTMP *r);
   int RTMP_ToggleStream(RTMP *r);
 
-  int RTMP_ConnectStream(RTMP *r, int seekTime);
-  int RTMP_ReconnectStream(RTMP *r, int seekTime);
+  RTMPResult RTMP_ConnectStream(RTMP *r, int seekTime);
+  RTMPResult RTMP_ReconnectStream(RTMP *r, int seekTime);
   void RTMP_DeleteStream(RTMP *r);
   int RTMP_GetNextMediaPacket(RTMP *r, RTMPPacket *packet);
   int RTMP_ClientPacket(RTMP *r, RTMPPacket *packet);
@@ -347,14 +379,14 @@ extern "C"
   int RTMP_LibVersion(void);
   void RTMP_UserInterrupt(void);	/* user typed Ctrl-C */
 
-  int RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject,
+  RTMPResult RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject,
 		     unsigned int nTime);
 
   /* caller probably doesn't know current timestamp, should
    * just use RTMP_Pause instead
    */
-  int RTMP_SendPause(RTMP *r, int DoPause, int dTime);
-  int RTMP_Pause(RTMP *r, int DoPause);
+  RTMPResult RTMP_SendPause(RTMP *r, int DoPause, int dTime);
+  RTMPResult RTMP_Pause(RTMP *r, int DoPause);
 
   int RTMP_FindFirstMatchingProperty(AMFObject *obj, const AVal *name,
 				      AMFObjectProperty * p);
@@ -363,12 +395,23 @@ extern "C"
   int RTMPSockBuf_Send(RTMPSockBuf *sb, const char *buf, int len);
   int RTMPSockBuf_Close(RTMPSockBuf *sb);
 
-  int RTMP_SendCreateStream(RTMP *r);
-  int RTMP_SendSeek(RTMP *r, int dTime);
-  int RTMP_SendServerBW(RTMP *r);
-  int RTMP_SendClientBW(RTMP *r);
+  RTMPResult RTMP_SendCreateStream(RTMP *r);
+  RTMPResult RTMP_SendSeek(RTMP *r, int dTime);
+  RTMPResult RTMP_SendServerBW(RTMP *r);
+  RTMPResult RTMP_SendClientBW(RTMP *r);
   void RTMP_DropRequest(RTMP *r, int i, int freeit);
+  /*
+   * RTMP_Read returns
+   * 1. the number of bytes read in case there was no error.
+   * 2. an error value from RTMPResult if there was an error.
+   * 3. RTMP_READ_DONE in case the stream has ended.
+   */
   int RTMP_Read(RTMP *r, char *buf, int size);
+  /*
+   * RTMP_Write returns
+   * 1. the number of bytes written in case there was no error.
+   * 2. an error value from RTMPResult if there was an error,
+   */
   int RTMP_Write(RTMP *r, const char *buf, int size);
 
 /* hashswf.c */

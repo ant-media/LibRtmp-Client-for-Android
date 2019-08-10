@@ -9,8 +9,9 @@
  * if it returns bigger than 0 it is successfull
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv *env, jobject instance, jstring url_, jint video_width, jint video_height) {
-    const char *url = (*env)->GetStringUTFChars(env, url_, 0);
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv* env, jobject thiz, jstring url_,
+                                                 jint video_width, jint video_height) {
+    const char *url = (*env)->GetStringUTFChars(env, url_, NULL);
 
     int result = rtmp_open_for_write(url, video_width, video_height);
 
@@ -18,51 +19,47 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv *env, jobject instance, 
     return result;
 }
 
-
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_writeAudio(JNIEnv *env, jobject instance,
-                                                       jbyteArray data_, jint offset, jint length,
-                                                       jint timestamp) {
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_writeAudio(JNIEnv* env, jobject thiz, jbyteArray data_,
+                                                       jint offset, jint length, jlong timestamp) {
     jbyte *data = (*env)->GetByteArrayElements(env, data_, NULL);
 
-    jint result = rtmp_sender_write_audio_frame(data, length, timestamp, 0);
+    jint result = rtmp_sender_write_audio_frame(&data[offset], length, timestamp, 0);
 
-    (*env)->ReleaseByteArrayElements(env, data_, data, 0);
+    (*env)->ReleaseByteArrayElements(env, data_, data, JNI_ABORT);
     return result;
 }
 
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_writeVideo(JNIEnv *env, jobject instance,
-                                                       jbyteArray data_, jint offset, jint length,
-                                                       jint timestamp) {
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_writeVideo(JNIEnv* env, jobject thiz, jbyteArray data_,
+                                                       jint offset, jint length, jlong timestamp) {
     jbyte *data = (*env)->GetByteArrayElements(env, data_, NULL);
 
-    jint result = rtmp_sender_write_video_frame(data, length, timestamp, 0, 0);
+    jint result = rtmp_sender_write_video_frame(&data[offset], length, timestamp, 0, 0);
 
-    (*env)->ReleaseByteArrayElements(env, data_, data, 0);
+    (*env)->ReleaseByteArrayElements(env, data_, data, JNI_ABORT);
 
     return result;
 }
 
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_close(JNIEnv *env, jobject instance) {
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_close(JNIEnv* env, jobject thiz) {
     rtmp_close();
 
     return 0;
 
 }
 
-JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv *env, jobject instance) {
-    return rtmp_is_connected();
+JNIEXPORT jboolean JNICALL
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv* env, jobject thiz) {
+    return rtmp_is_connected() ? true : false;
 }
 
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_read(JNIEnv *env, jobject instance, jbyteArray data_,
+Java_net_butterflytv_rtmp_1client_RTMPMuxer_read(JNIEnv* env, jobject thiz, jbyteArray data_,
                                                  jint offset, jint size) {
 
-
-    char* data = malloc(size*sizeof(char));
+    char* data = malloc(size);
 
     int readCount = rtmp_read_date(data, size);
 

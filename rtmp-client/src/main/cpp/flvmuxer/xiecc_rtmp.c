@@ -147,29 +147,29 @@ static uint8_t gen_audio_tag_header()
 int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_height) {
     rtmp = RTMP_Alloc();
     if (rtmp == NULL) {
-        return -1;
+        return RTMP_ERROR_OPEN_ALLOC;
     }
 
     RTMP_Init(rtmp);
-    int ret = RTMP_SetupURL(rtmp, url);
+    RTMPResult ret = RTMP_SetupURL(rtmp, url);
 
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return -2;
+        return ret;
     }
 
     RTMP_EnableWrite(rtmp);
 
 
     ret = RTMP_Connect(rtmp, NULL);
-    if (!ret) {
+    if (ret != RTMP_SUCCESS) {
         RTMP_Free(rtmp);
-        return -3;
+        return ret;
     }
     ret = RTMP_ConnectStream(rtmp, 0);
 
-    if (!ret) {
-        return -4;
+    if (ret != RTMP_SUCCESS) {
+        return RTMP_ERROR_OPEN_CONNECT_STREAM;
     }
 
     video_config_ok = false;
@@ -213,7 +213,7 @@ int rtmp_open_for_write(const char *url, uint32_t video_width, uint32_t video_he
 
         return RTMP_Write(rtmp, send_buffer, output_len);
     }
-    return -1;
+    return RTMP_ERROR_CONNECTION_LOST;
 }
 
 int rtmp_close() {
@@ -252,7 +252,7 @@ int rtmp_sender_write_audio_frame(uint8_t *data,
                                   uint32_t abs_ts)
 {
 
-    int val = 0;
+    int val = RTMP_SUCCESS;
     uint32_t audio_ts = (uint32_t)dts_us;
     uint32_t offset;
     uint32_t body_len;
@@ -349,7 +349,7 @@ int rtmp_sender_write_audio_frame(uint8_t *data,
         val = RTMP_Write(rtmp, output, output_len);
         free(output);
     }
-    return (val > 0) ? 0: -1;
+    return val;
 }
 
 static uint32_t find_start_code(uint8_t *buf, uint32_t zeros_in_startcode)
@@ -385,32 +385,34 @@ static uint8_t * get_nal(uint32_t *len, uint8_t **offset, uint8_t *start, uint32
     uint8_t *p  =  *offset;
     *len = 0;
 
-    //p=offset
-    // p - start >= total means reach of the end of the packet
-    if ((p - start) >= total)
-        return NULL;
-
     while(1) {
+        //p=offset
+        // p - start >= total means reach of the end of the packet
+        // HINT "-3": Do not access not allowed memory
+        if ((p - start) >= total-3)
+            return NULL;
+
         info =  find_start_code(p, 3);
         //if info equals to 1, it means it find the start code
         if (info == 1)
             break;
         p++;
-        if ((p - start) >= total)
-            return NULL;
     }
     q = p + 4; // add 4 for first bytes 0 0 0 1
     p = q;
     // find a second start code in the data, there may be second code in data or there may not
     while(1) {
+        // HINT "-3": Do not access not allowed memory
+        if ((p - start) >= total-3) {
+            p = start + total;
+            break;
+        }
+
         info =  find_start_code(p, 3);
 
         if (info == 1)
             break;
         p++;
-        if ((p - start) >= total)
-            //return NULL;
-            break;
     }
 
     // length of the nal unit
@@ -589,6 +591,9 @@ int rtmp_sender_write_video_frame(uint8_t *data,
             val = RTMP_Write(rtmp, output, output_len);
             //RTMP Send out
             free(output);
+            if (val < RTMP_SUCCESS) {
+                return val;
+            }
             video_config_ok = true;
 
 
@@ -606,7 +611,15 @@ int rtmp_sender_write_video_frame(uint8_t *data,
         }
         else if ((nal[0] & 0x1f) == 0x05) // it can be 25,45,65
         {
-            val += send_key_frame(nal_len, ts, abs_ts, nal);
+            int result = send_key_frame(nal_len, ts, abs_ts, nal);
+            if (result < RTMP_SUCCESS)
+            {
+                return result;
+            }
+            else
+            {
+                val += result;
+            }
         }
         else if ((nal[0] & 0x1f) == 0x01)  // itcan be 21,41,61
         {
@@ -654,14 +667,19 @@ int rtmp_sender_write_video_frame(uint8_t *data,
             if (g_file_handle) {
                 fwrite(output, output_len, 1, g_file_handle);
             }
-            val += RTMP_Write(rtmp, output, output_len);
+            int result = RTMP_Write(rtmp, output, output_len);
 
             //RTMP Send out
             free(output);
+
+            if (result < RTMP_SUCCESS) {
+                return result;
+            }
+            val += result;
         }
 
         nal = get_nal(&nal_len, &buf_offset, buf, total);
     }
 
-    return (val > 0) ? 0: -1;
+    return val;
 }

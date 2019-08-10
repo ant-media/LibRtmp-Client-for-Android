@@ -7,8 +7,8 @@ android {
 
     defaultConfig.with {
         applicationId  "net.butterflytv.rtmp_client.test"
-        minSdkVersion  15
-        targetSdkVersion  15
+        minSdkVersion  21
+        targetSdkVersion  21
         versionCode  1
         versionName  "1.0"
 
@@ -30,12 +30,12 @@ android.buildTypes {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:1.10.19'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation 'com.android.support:support-annotations:28.0.0'
+    testImplementation 'org.mockito:mockito-core:2.7.22'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support:support-annotations:27.0.2'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
-    implementation project(':rtmp-client')
+    api project(':rtmp-client')
 }
