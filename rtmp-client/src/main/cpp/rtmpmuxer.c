@@ -6,7 +6,7 @@
 
 
 /**
- * if it returns bigger than 0 it is successfull
+ * if it returns bigger than 0 it is successful
  */
 JNIEXPORT jint JNICALL
 Java_net_butterflytv_rtmp_1client_RTMPMuxer_open(JNIEnv* env, jobject thiz, jstring url_,
