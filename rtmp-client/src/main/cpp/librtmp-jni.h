@@ -4,8 +4,8 @@
 #include "flvmuxer/xiecc_rtmp.h"
 /* Header for class net_butterflytv_rtmp_client_RtmpClient */
 
-#ifndef _Included_net_butterflytv_rtmp_client_RtmpClient
-#define _Included_net_butterflytv_rtmp_client_RtmpClient
+#ifndef _Included_io_antmedia_rtmp_client_RtmpClient
+#define _Included_io_antmedia_rtmp_client_RtmpClient
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -16,7 +16,7 @@ extern "C" {
  * Signature: (Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thiz,
+Java_io_antmedia_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thiz,
                                                         jstring url, jboolean isPublishMode,
                                                         jlong rtmpPointer, jint sendTimeoutInMs,
                                                         jint receiveTimeoutInMs);
@@ -27,7 +27,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeOpen(JNIEnv* env, jobject thi
  * Signature: ([CI)I
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thiz,
+Java_io_antmedia_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thiz,
                                                         jbyteArray data, jint offset, jint size,
                                                         jlong rtmpPointer);
 
@@ -37,7 +37,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeRead(JNIEnv* env, jobject thi
  * Signature: ([CI)I
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject thiz, jbyteArray data,
+Java_io_antmedia_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject thiz, jbyteArray data,
                                                          jint offset, jint size, jlong rtmpPointer);
 
 /*
@@ -46,7 +46,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativeWrite(JNIEnv* env, jobject th
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_seek(JNIEnv* env, jobject thiz, jint seekTime);
+Java_io_antmedia_rtmp_1client_RtmpClient_seek(JNIEnv* env, jobject thiz, jint seekTime);
 
 /*
  * Class:     net_butterflytv_rtmp_client_RtmpClient
@@ -54,7 +54,7 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_seek(JNIEnv* env, jobject thiz, jin
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject thiz, jboolean pause,
+Java_io_antmedia_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject thiz, jboolean pause,
                                                          jlong rtmpPointer);
 
 /*
@@ -63,19 +63,19 @@ Java_net_butterflytv_rtmp_1client_RtmpClient_nativePause(JNIEnv* env, jobject th
  * Signature: ()I
  */
 JNIEXPORT void JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativeClose(JNIEnv* env, jobject thiz, jlong rtmpPointer);
+Java_io_antmedia_rtmp_1client_RtmpClient_nativeClose(JNIEnv* env, jobject thiz, jlong rtmpPointer);
 
 JNIEXPORT jboolean JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativeIsConnected(JNIEnv* env, jobject thiz, jlong rtmpPointer);
+Java_io_antmedia_rtmp_1client_RtmpClient_nativeIsConnected(JNIEnv* env, jobject thiz, jlong rtmpPointer);
 
 JNIEXPORT void JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_write_1flv_1header(JNIEnv* env, jobject thiz,
+Java_io_antmedia_rtmp_1client_RTMPMuxer_write_1flv_1header(JNIEnv* env, jobject thiz,
                                                                jboolean is_have_audio, jboolean is_have_video) {
     write_flv_header(is_have_audio, is_have_video);
 }
 
 JNIEXPORT void JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1open(JNIEnv* env, jobject thiz, jstring filename) {
+Java_io_antmedia_rtmp_1client_RTMPMuxer_file_1open(JNIEnv* env, jobject thiz, jstring filename) {
     const char *cfilename = (*env)->GetStringUTFChars(env, filename, NULL);
 
     flv_file_open(cfilename);
@@ -84,21 +84,21 @@ Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1open(JNIEnv* env, jobject thiz
 }
 
 JNIEXPORT void JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_file_1close(JNIEnv* env, jobject thiz) {
+Java_io_antmedia_rtmp_1client_RTMPMuxer_file_1close(JNIEnv* env, jobject thiz) {
 
     flv_file_close();
 
 }
 
 JNIEXPORT jlong JNICALL
-Java_net_butterflytv_rtmp_1client_RtmpClient_nativeAlloc(JNIEnv* env, jobject thiz);
+Java_io_antmedia_rtmp_1client_RtmpClient_nativeAlloc(JNIEnv* env, jobject thiz);
 
 JNIEXPORT jint JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_read(JNIEnv* env, jobject thiz, jbyteArray data,
+Java_io_antmedia_rtmp_1client_RTMPMuxer_read(JNIEnv* env, jobject thiz, jbyteArray data,
                                                  jint offset, jint size);
 
 JNIEXPORT jboolean JNICALL
-Java_net_butterflytv_rtmp_1client_RTMPMuxer_isConnected(JNIEnv* env, jobject thiz);
+Java_io_antmedia_rtmp_1client_RTMPMuxer_isConnected(JNIEnv* env, jobject thiz);
 
 jint throwIllegalStateException (JNIEnv* env, char* message);
 

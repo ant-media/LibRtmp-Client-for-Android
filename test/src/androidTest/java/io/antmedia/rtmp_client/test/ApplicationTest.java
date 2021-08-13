@@ -1,12 +1,12 @@
-package net.butterflytv.rtmp_client.test;
+package io.antmedia.rtmp_client.test;
 
 import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import net.butterflytv.rtmp_client.RTMPMuxer;
-import net.butterflytv.rtmp_client.RtmpClient;
+import io.antmedia.rtmp_client.RTMPMuxer;
+import io.antmedia.rtmp_client.RtmpClient;
 
 import org.junit.After;
 import org.junit.Rule;
