@@ -6,7 +6,7 @@
 
 
 /**
- * if it returns bigger than 0 it is successfull
+ * if it returns bigger than 0 it is successful
  */
 JNIEXPORT jint JNICALL
 Java_io_antmedia_rtmp_1client_RTMPMuxer_open(JNIEnv* env, jobject thiz, jstring url_,
