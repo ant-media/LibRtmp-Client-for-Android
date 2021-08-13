@@ -15,7 +15,7 @@ android {
             cmake {
                 cppFlags "-frtti -fexceptions"
                 arguments '-DANDROID_PLATFORM=android-15'
-                abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips', 'mips64'
+                abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a' //, 'armeabi', 'mips', 'mips64'
             }
         }
     }
@@ -101,7 +101,7 @@ ext {
     siteUrl = 'https://github.com/ButterflyTV/Librtmp-Client-for-Android'
     gitUrl = 'https://github.com/ButterflyTV/LibRtmp-Client-for-Android.git'
 
-    libraryVersion = '3.1.0'
+    libraryVersion = '3.1.1-dev'
 
     developerId = 'mekya'
     developerName = 'Ahmet Oguz Mermerkaya'
