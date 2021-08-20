@@ -1,4 +1,4 @@
-package net.butterflytv.rtmp_client;
+package io.antmedia.rtmp_client;
 
 import java.io.IOException;
 
@@ -236,7 +236,7 @@ public class RtmpClient {
      * returns
 
      *
-     * returns {@link #OPEN_SUCCESS} if it is successful, throws RtmpIOException if it is failed
+     * returns {@link #RTMP_SUCCESS} if it is successful, throws RtmpIOException if it is failed
      */
     private native int nativeOpen(String url, boolean isPublishMode, long rtmpPointer,
         int sendTimeoutInMs, int receiveTimeoutInMs);

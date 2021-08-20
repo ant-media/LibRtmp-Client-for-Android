@@ -1,4 +1,4 @@
-package net.butterflytv.rtmp_client.test;
+package io.antmedia.rtmp_client.test;
 
 import android.app.Activity;
 import android.os.Bundle;

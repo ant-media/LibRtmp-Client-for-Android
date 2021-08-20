@@ -3,16 +3,15 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion  21
-    buildToolsVersion  "28.0.3"
 
     defaultConfig.with {
-        applicationId  "net.butterflytv.rtmp_client.test"
+        applicationId  "io.antmedia.rtmp_client.test"
         minSdkVersion  21
         targetSdkVersion  21
         versionCode  1
         versionName  "1.0"
 
-        testApplicationId  "net.butterflytv.rtmp_client.test.app"
+        testApplicationId  "io.antmedia.rtmp_client.test.app"
         testInstrumentationRunner  "android.support.test.runner.AndroidJUnitRunner"
     }
 

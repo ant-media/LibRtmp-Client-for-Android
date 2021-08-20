@@ -2,12 +2,11 @@ apply plugin: "com.android.library"
 
 
 android {
-    compileSdkVersion  21 // sdk level 21 lets ndk generate resources for archs such as arm64.
-    buildToolsVersion  "28.0.3"
+    compileSdkVersion  29 // sdk level 21 lets ndk generate resources for archs such as arm64.
     defaultConfig {
         // applicationId "io.antmedia.rtmpclient"
         minSdkVersion 15
-        targetSdkVersion 15
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -15,12 +14,13 @@ android {
             cmake {
                 cppFlags "-frtti -fexceptions"
                 arguments '-DANDROID_PLATFORM=android-15'
-                abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips', 'mips64'
+                abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a' //, 'armeabi', 'mips', 'mips64'
             }
         }
     }
-
-
+    lintOptions {
+        abortOnError false
+    }
 
     buildTypes {
         release {
@@ -43,65 +43,20 @@ android {
 }
 
 
-
-
-//android.
-//ndk {
-//    moduleName = "rtmp-jni"
-    // cppFlags.addAll(["-I${file("src/main/jni/native_app_glue")}".toString(),
-    //                  "-I${file("src/main/jni/cpufeatures")}".toString(),
-    //                 "-I${file("src/main/jni/ndk_helper")}".toString()])
-    // CFlags is configured in similar way as cppFlags
-//    CFlags.add("-DNO_CRYPTO".toString())
-//    CFlags.add("-I${file("src/main/jni/librtmp")}".toString())
-//    ldLibs.add("log")
-
-
-
-//}
-
-android.productFlavors {
-    // for detailed abiFilter descriptions, refer to "Supported ABIs" @
-    // https://developer.android.com/ndk/guides/abis.html#sa
-    // build one including all productFlavors
-
-
-    /*
-    create("fat") {
-        ndk.with {
-        // You can customize the NDK configurations for each
-        // productFlavors and buildTypes.
-        abiFilters.add("armeabi")
-        abiFilters.add("armeabi-v7a")
-        abiFilters.add("arm64-v8a")
-        abiFilters.add("mips")
-        abiFilters.add("x86")
-
-            abiFilters 'arm64-v8a', 'armeabi-v7a'
-        }
-
-    }
-     */
-
-
-}
-
-
-
 ext {
     bintrayRepo = 'maven'
     bintrayName = 'rtmp-client'
 
-    publishedGroupId = 'net.butterflytv.utils'
+    publishedGroupId = 'io.antmedia'
     libraryName = 'rtmp-client'
     artifact = 'rtmp-client'
 
     libraryDescription = 'RTMP Client for Android. It supports all architectures with 300KB total size'
 
-    siteUrl = 'https://github.com/ButterflyTV/Librtmp-Client-for-Android'
-    gitUrl = 'https://github.com/ButterflyTV/LibRtmp-Client-for-Android.git'
+    siteUrl = 'https://github.com/ant-media/Librtmp-Client-for-Android'
+    gitUrl = 'https://github.com/ant-media/LibRtmp-Client-for-Android.git'
 
-    libraryVersion = '3.1.0'
+    libraryVersion = '3.2.0-SNAPSHOT'
 
     developerId = 'mekya'
     developerName = 'Ahmet Oguz Mermerkaya'
@@ -112,110 +67,79 @@ ext {
     allLicenses = ["Apache-2.0"]
 }
 
-dependencies {
 
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
 }
 
 /////////////////////////////////////////////////////
-apply plugin: "com.jfrog.bintray"
-
 version = libraryVersion
-
-task sourcesJar(type: Jar) {
-    from "src/main/java"
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = "src/main/java"
-    // classpath += project.files(getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-
-// Bintray
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
 
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        publish = true
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
-            gpg {
-                sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = properties.getProperty("bintray.gpg.password")
-                //Optional. The passphrase for GPG signing'
+                groupId = publishedGroupId
+                artifactId = artifact
+                version = libraryVersion
+
+                artifact bundleReleaseAar
+                artifact androidSourcesJar
+                pom {
+                    name = libraryName
+                    description = libraryDescription
+                    url = siteUrl
+
+                    licenses {
+                        license {
+                            name = licenseName
+                            url = licenseUrl
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = developerId
+                            name = developerName
+                            email = developerEmail
+                        }
+                    }
+
+                    scm {
+                        connection = gitUrl
+                        developerConnection = gitUrl
+                        url = siteUrl
+                    }
+                }
+            }
+
+        }
+        repositories {
+            maven {
+                credentials {
+                    username properties.getProperty("maven.user")
+                    password properties.getProperty("maven.password")
+                }
+
+                def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             }
         }
     }
-}
 
-apply plugin: 'com.github.dcendents.android-maven'
-
-group = publishedGroupId                               // Maven Group ID for the artifact
-
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                groupId publishedGroupId
-                artifactId artifact
-
-                // Add your description here
-                name libraryName
-                description libraryDescription
-                url siteUrl
-
-                // Set your license
-                licenses {
-                    license {
-                        name licenseName
-                        url licenseUrl
-                    }
-                }
-                developers {
-                    developer {
-                        id developerId
-                        name developerName
-                        email developerEmail
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-
-                }
-            }
-        }
+    signing {
+        sign publishing.publications.release
     }
 }
 
 //How to upload
-//./gradlew install
-//./gradlew bintrayUpload
+//./gradlew clean build publish
+
 
 
 

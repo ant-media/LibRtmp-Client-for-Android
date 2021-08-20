@@ -1,4 +1,4 @@
-package net.butterflytv.rtmp_client;
+package io.antmedia.rtmp_client;
 
 /**
  * Created by faraklit on 08.02.2016.
