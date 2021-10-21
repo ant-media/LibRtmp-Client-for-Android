@@ -56,7 +56,7 @@ ext {
     siteUrl = 'https://github.com/ant-media/Librtmp-Client-for-Android'
     gitUrl = 'https://github.com/ant-media/LibRtmp-Client-for-Android.git'
 
-    libraryVersion = '3.2.0-SNAPSHOT'
+    libraryVersion = '3.2.0'
 
     developerId = 'mekya'
     developerName = 'Ahmet Oguz Mermerkaya'
@@ -125,7 +125,7 @@ afterEvaluate {
                     password properties.getProperty("maven.password")
                 }
 
-                def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                def releasesRepoUrl = 'https://oss.sonatype.org/service/local/repositories/releases/content'
                 def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             }
